@@ -29,8 +29,8 @@ func main() {
 	if problem {
 		return
 	}
-	fmt.Printf("%v\n\nNumber of ants: %v\n\n", textFile, ants)
-	for i, j := range nest {
+	fmt.Printf("\n%v\n\nNumber of ants: %v\n\n", textFile, ants)
+	for i, j := range nest.Rooms {
 		fmt.Printf("Name of room:\t%v", j.Name)
 		if j.Start {
 			fmt.Printf(" (start)")
@@ -39,9 +39,16 @@ func main() {
 			fmt.Printf(" (end)")
 		}
 		fmt.Println()
-		fmt.Printf("Connected to:\t%v\n", j.Neighbors)
+		fmt.Print("Connected to:\t")
+		for i := range j.Neighbors {
+			fmt.Print(j.Neighbors[i].Name)
+			if i+1 != len(j.Neighbors) {
+				fmt.Print(", ")
+			}
+		}
+		fmt.Println()
 		fmt.Printf("Coordinates:\t(%v, %v)\n", j.X, j.Y)
-		if i < len(nest)-1 {
+		if i < len(nest.Rooms)-1 {
 			fmt.Println()
 		}
 	}

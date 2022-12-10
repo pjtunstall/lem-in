@@ -6,24 +6,44 @@ import (
 	"strings"
 )
 
-func newRoom(row string) (Room, bool) {
+func nameRoom(name string, room *Room) *Room {
+	room.Name = name
+	return room
+}
+
+func newRoom(row string) (*Room, bool) {
 	a := strings.Split(row, " ")
 	var problem bool
+	if len(a) != 3 {
+		fmt.Println("ERROR: Invalid coordinates.")
+		problem = true
+	}
 	x, er1 := strconv.Atoi(a[1])
 	y, er2 := strconv.Atoi(a[2])
 	if er1 != nil || er2 != nil {
 		fmt.Println("ERROR: Invalid coordinates.")
 		problem = true
 	}
-	return Room{
-		Name: a[0],
-		X:    x,
-		Y:    y,
-	}, problem
+	var room Room
+	nameRoom(a[0], &room)
+	room.X = x
+	room.Y = y
+	return &room, problem
 }
 
-func Rooms(text []string) ([]Room, bool) {
-	nest := []Room{}
+func findRoom(name string, counter int, nest *Nest) *Room {
+	if nest.Rooms[counter-1].Name == name {
+		return nest.Rooms[counter-1]
+	}
+	if counter == 0 {
+		panic("Coundn't find a room of that name.")
+	}
+	counter--
+	return findRoom(name, counter, nest)
+}
+
+func Rooms(text []string) (Nest, bool) {
+	var nest Nest
 	n := FirstTunnel(text)
 	startExists := false
 	endExists := false
@@ -46,7 +66,7 @@ loop:
 				r.End = true
 				endExists = true
 			}
-			nest = append(nest, r)
+			nest.Rooms = append(nest.Rooms, r)
 		}
 	}
 	if !startExists {
@@ -57,32 +77,32 @@ loop:
 		fmt.Println("ERROR: No end room found.")
 		return nest, true
 	}
-	for i := 0; i < len(nest); i++ {
+	for i := 0; i < len(nest.Rooms); i++ {
 		for j := n; j < len(text); j++ {
 			pair := strings.Split(text[j], "-")
-			if nest[i].Name == pair[0] {
-				nest[i].Neighbors = append(nest[i].Neighbors, pair[1])
+			if nest.Rooms[i].Name == pair[0] {
+				nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[1], len(nest.Rooms), &nest))
 			}
-			if nest[i].Name == pair[1] {
-				nest[i].Neighbors = append(nest[i].Neighbors, pair[0])
+			if nest.Rooms[i].Name == pair[1] {
+				nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[0], len(nest.Rooms), &nest))
 			}
 		}
 	}
-	for i, ii := range nest {
-		for j, jj := range nest {
+	for i, ii := range nest.Rooms {
+		for j, jj := range nest.Rooms {
 			if ii.Name == jj.Name && j != i {
 				fmt.Println("ERROR: Duplicated room.")
 				return nest, true
 			}
 		}
-		for j, jj := range nest[i].Neighbors {
-			if jj == ii.Name {
+		for j, jj := range nest.Rooms[i].Neighbors {
+			if jj.Name == ii.Name {
 				fmt.Println("ERROR: Room links to itself.")
 				return nest, true
 			}
 			match := false
-			for _, kk := range nest {
-				if jj == kk.Name {
+			for _, kk := range nest.Rooms {
+				if jj.Name == kk.Name {
 					match = true
 				}
 			}
@@ -90,8 +110,8 @@ loop:
 				fmt.Println("ERROR: Link to unknown room.")
 				return nest, true
 			}
-			if j < len(nest[i].Neighbors)-1 {
-				for _, kk := range nest[i].Neighbors[j+1:] {
+			if j < len(nest.Rooms[i].Neighbors)-1 {
+				for _, kk := range nest.Rooms[i].Neighbors[j+1:] {
 					if jj == kk {
 						fmt.Println("ERROR: Two links between same two rooms.")
 						return nest, true
