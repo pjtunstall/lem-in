@@ -45,8 +45,6 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 func Rooms(text []string) (Nest, bool) {
 	var nest Nest
 	n := FirstTunnel(text)
-	startExists := false
-	endExists := false
 loop:
 	for i := 1; i < n; i++ {
 		switch {
@@ -60,20 +58,20 @@ loop:
 			}
 			if text[i-1] == "##start" {
 				r.Start = true
-				startExists = true
+				nest.Start = r
 			}
 			if text[i-1] == "##end" {
 				r.End = true
-				endExists = true
+				nest.End = r
 			}
 			nest.Rooms = append(nest.Rooms, r)
 		}
 	}
-	if !startExists {
+	if nest.Start == nil {
 		fmt.Println("ERROR: No start room found.")
 		return nest, true
 	}
-	if !endExists {
+	if nest.End == nil {
 		fmt.Println("ERROR: No end room found.")
 		return nest, true
 	}

@@ -31,4 +31,7 @@ func main() {
 	}
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
+
+	fmt.Println(nest.Start.Neighbors[0])
+	fmt.Println(lem.PathFinder(&nest))
 }
