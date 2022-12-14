@@ -31,7 +31,20 @@ func main() {
 	}
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
-
-	fmt.Println(nest.Start.Neighbors[0])
-	fmt.Println(lem.PathFinder(&nest))
+	fmt.Print("\nPaths:\n")
+	nest.Start.Predecessor = nest.Start
+	for _, i := range nest.Start.Neighbors {
+		if i.End {
+			fmt.Printf("%v-%v\n", nest.Start.Name, nest.End.Name)
+		} else {
+			a, _ := lem.Scout(nest.Start, i, 0)
+			if a != nil {
+				fmt.Print(nest.Start.Name, "-")
+				for j := len(*a) - 1; j > -1; j-- {
+					fmt.Print((*a)[j].Name, "-")
+				}
+				fmt.Println(nest.End.Name)
+			}
+		}
+	}
 }
