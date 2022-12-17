@@ -77,12 +77,14 @@ loop:
 	}
 	for i := 0; i < len(nest.Rooms); i++ {
 		for j := n; j < len(text); j++ {
-			pair := strings.Split(text[j], "-")
-			if nest.Rooms[i].Name == pair[0] {
-				nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[1], len(nest.Rooms), &nest))
-			}
-			if nest.Rooms[i].Name == pair[1] {
-				nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[0], len(nest.Rooms), &nest))
+			if !strings.Contains(text[j], "#") {
+				pair := strings.Split(text[j], "-")
+				if nest.Rooms[i].Name == pair[0] {
+					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[1], len(nest.Rooms), &nest))
+				}
+				if nest.Rooms[i].Name == pair[1] {
+					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[0], len(nest.Rooms), &nest))
+				}
 			}
 		}
 	}

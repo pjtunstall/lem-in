@@ -7,17 +7,20 @@ type Nest struct {
 }
 
 type Room struct {
-	Name        string
-	Neighbors   []*Room
-	X           int
-	Y           int
-	Start       bool
-	End         bool
-	Predecessor *Room
+	Name         string
+	Neighbors    []*Room
+	X            int
+	Y            int
+	Start        bool
+	End          bool
+	Visited      bool
+	PathNode     bool
+	CurrentLevel bool
+	Predecessor  *Room
+	Level        int
 }
 
-type PathNode struct {
-	Node     *Room
-	Previous *Room
-	Next     *Room
+type Path struct {
+	Penultimate *Room
+	Steps       int
 }

@@ -31,20 +31,44 @@ func main() {
 	}
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
-	fmt.Print("\nPaths:\n")
-	nest.Start.Predecessor = nest.Start
-	for _, i := range nest.Start.Neighbors {
-		if i.End {
-			fmt.Printf("%v-%v\n", nest.Start.Name, nest.End.Name)
-		} else {
-			a, _ := lem.Scout(nest.Start, i, 0)
-			if a != nil {
-				fmt.Print(nest.Start.Name, "-")
-				for j := len(*a) - 1; j > -1; j-- {
-					fmt.Print((*a)[j].Name, "-")
-				}
-				fmt.Println(nest.End.Name)
+
+	lem.LevelFinder(&nest)
+	fmt.Println()
+
+	for i := 0; i < len(nest.Rooms)+1; i++ {
+		for _, r := range nest.Rooms {
+			if r.Level == i {
+				fmt.Printf("%v, distance from start: %v\n", r.Name, r.Level)
 			}
 		}
 	}
+
+	fmt.Print("\nPaths:\n")
+
+	paths := lem.Scout(&nest)
+
+	for _, path := range paths {
+		if path.Steps != 0 {
+			pathString := ""
+			for room := path.Penultimate; room.Predecessor != nil; room = room.Predecessor {
+				pathString = room.Name + "-" + pathString
+			}
+			fmt.Printf("%v-%v%v, steps: %v\n", nest.Start.Name, pathString, nest.End.Name, path.Steps)
+		}
+	}
+
+	// nest.Start.Predecessor = nest.Start
+	// for _, i := range nest.Start.Neighbors {
+	// 	a, steps := lem.Scout(nest.Start, i, 0, &nest)
+	// 	if a != nil {
+	// 		for j := len(*a) - 1; j > -1; j-- {
+	// 			fmt.Print((*a)[j].Name)
+	// 			if j > 0 {
+	// 				fmt.Print("-")
+	// 			} else {
+	// 				fmt.Printf(" (steps: %v)\n", steps)
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

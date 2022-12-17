@@ -5,7 +5,11 @@ import (
 )
 
 func PrintFormattedNest(nest *Nest, ants int) {
-	fmt.Printf("\nNumber of ants: %v\n\n", ants)
+	fmt.Printf("\nNumber of ants: %v\n", ants)
+	for i := 0; i < ants; i++ {
+		fmt.Print(string([]rune{0x1F41C, 32}))
+	}
+	fmt.Print("\n\n")
 	for i, j := range nest.Rooms {
 		fmt.Printf("Name of room:\t%v", j.Name)
 		if j.Start {
