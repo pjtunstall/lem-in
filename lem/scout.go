@@ -80,6 +80,28 @@ func MakePath(nest *Nest, r *Room) Path {
 	return p
 }
 
+func Scout(nest *Nest) []Path {
+	paths := []Path{}
+	p := Path{}
+	// Insert something to append a path from start directly to end.
+	// First, find a way to represent such a path. This is example02.
+	for _, n := range nest.Start.Neighbors {
+		if n == nest.End {
+			p.Steps = 1
+		} else {
+			ClearVisited(nest)
+			nest.Start.Visited = true
+			n.Visited = true
+			n.Predecessor = nest.Start
+			p = PathFinder(nest, n)
+		}
+		if p.Steps != 0 {
+			paths = append(paths, p)
+		}
+	}
+	return paths
+}
+
 func PathFinder(nest *Nest, n *Room) Path {
 	var change bool
 loop:
@@ -104,41 +126,41 @@ loop:
 	return Path{nil, 0}
 }
 
-func Scout(nest *Nest) []Path {
-	paths := []Path{}
-	// Insert something to append a path from start directly to end.
-	// First, find a way to represent such a path. This is example02.
-	for _, n := range nest.Start.Neighbors {
-		ClearVisited(nest)
-		nest.Start.Visited = true
-		n.Visited = true
-		n.Predecessor = nest.Start
-		p := PathFinder(nest, n)
-		if p.Steps != 0 {
-			paths = append(paths, p)
-		}
-	}
-	return paths
-}
-
-// func Scout(q, r *Room, steps int, nest *Nest) (*[]Room, int) {
-// 	steps++
-// 	r.Predecessor = q
-// 	if r.End {
-// 		path := []Room{}
-// 		for i := r; !i.Start; {
-// 			path = append(path, *i)
-// 			k := i.Predecessor
-// 			i.Predecessor = nil
-// 			i = k
-// 		}
-// 		path = append(path, *nest.Start)
-// 		return &path, steps
-// 	}
-// 	for _, i := range r.Neighbors {
-// 		if i.Predecessor == nil {
-// 			return Scout(r, i, steps, nest)
+// func Scout(nest *Nest) []Path {
+// 	paths := []Path{}
+// 	// Insert something to append a path from start directly to end.
+// 	// First, find a way to represent such a path. This is example02.
+// 	for _, n := range nest.Start.Neighbors {
+// 		ClearVisited(nest)
+// 		nest.Start.Visited = true
+// 		n.Visited = true
+// 		n.Predecessor = nest.Start
+// 		p := PathFinder(nest, n)
+// 		if p.Steps != 0 {
+// 			paths = append(paths, p)
 // 		}
 // 	}
-// 	return nil, 0
+// 	return paths
 // }
+
+// // func Scout(q, r *Room, steps int, nest *Nest) (*[]Room, int) {
+// // 	steps++
+// // 	r.Predecessor = q
+// // 	if r.End {
+// // 		path := []Room{}
+// // 		for i := r; !i.Start; {
+// // 			path = append(path, *i)
+// // 			k := i.Predecessor
+// // 			i.Predecessor = nil
+// // 			i = k
+// // 		}
+// // 		path = append(path, *nest.Start)
+// // 		return &path, steps
+// // 	}
+// // 	for _, i := range r.Neighbors {
+// // 		if i.Predecessor == nil {
+// // 			return Scout(r, i, steps, nest)
+// // 		}
+// // 	}
+// // 	return nil, 0
+// // }

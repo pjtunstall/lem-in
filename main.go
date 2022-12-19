@@ -59,13 +59,14 @@ func main() {
 	paths := lem.Scout(&nest)
 
 	for _, path := range paths {
-		if path.Steps != 0 {
-			pathString := ""
+		pathString := ""
+		if path.Steps != 1 {
 			for room := path.Penultimate; room.Predecessor != nil; room = room.Predecessor {
 				pathString = room.Name + "-" + pathString
 			}
-			fmt.Printf("%v-%v%v, steps: %v\n", nest.Start.Name, pathString, nest.End.Name, path.Steps)
 		}
+		fmt.Printf("%v-%v%v, steps: %v\n", nest.Start.Name, pathString, nest.End.Name, path.Steps)
+
 	}
 
 	// nest.Start.Predecessor = nest.Start
