@@ -68,19 +68,4 @@ func main() {
 		fmt.Printf("%v-%v%v, steps: %v\n", nest.Start.Name, pathString, nest.End.Name, path.Steps)
 
 	}
-
-	// nest.Start.Predecessor = nest.Start
-	// for _, i := range nest.Start.Neighbors {
-	// 	a, steps := lem.Scout(nest.Start, i, 0, &nest)
-	// 	if a != nil {
-	// 		for j := len(*a) - 1; j > -1; j-- {
-	// 			fmt.Print((*a)[j].Name)
-	// 			if j > 0 {
-	// 				fmt.Print("-")
-	// 			} else {
-	// 				fmt.Printf(" (steps: %v)\n", steps)
-	// 			}
-	// 		}
-	// 	}
-	// }
 }

@@ -83,8 +83,6 @@ func MakePath(nest *Nest, r *Room) Path {
 func Scout(nest *Nest) []Path {
 	paths := []Path{}
 	p := Path{}
-	// Insert something to append a path from start directly to end.
-	// First, find a way to represent such a path. This is example02.
 	for _, n := range nest.Start.Neighbors {
 		if n == nest.End {
 			p.Steps = 1
