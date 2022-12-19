@@ -32,13 +32,24 @@ func main() {
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
 
-	lem.LevelFinder(&nest)
+	lem.LevelFinder(&nest, nest.Start)
+	lem.LevelFinder(&nest, nest.End)
 	fmt.Println()
 
 	for i := 0; i < len(nest.Rooms)+1; i++ {
 		for _, r := range nest.Rooms {
 			if r.Level == i {
 				fmt.Printf("%v, distance from start: %v\n", r.Name, r.Level)
+			}
+		}
+	}
+
+	fmt.Println()
+
+	for i := 0; i < len(nest.Rooms)+1; i++ {
+		for _, r := range nest.Rooms {
+			if r.CoLevel == i {
+				fmt.Printf("%v, distance from end: %v\n", r.Name, r.CoLevel)
 			}
 		}
 	}

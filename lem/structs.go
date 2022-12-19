@@ -18,6 +18,7 @@ type Room struct {
 	CurrentLevel bool
 	Predecessor  *Room
 	Level        int
+	CoLevel      int
 }
 
 type Path struct {

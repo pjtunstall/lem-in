@@ -7,12 +7,23 @@ func Min(a, b int) int {
 	return b
 }
 
-func LevelFinder(nest *Nest) {
+func LevelFinder(nest *Nest, from *Room) {
+	ClearVisited(nest)
 	for _, r := range nest.Rooms {
-		r.Level = len(nest.Rooms)
+		switch from {
+		case nest.Start:
+			r.Level = len(nest.Rooms)
+		case nest.End:
+			r.CoLevel = len(nest.Rooms)
+		}
 	}
-	nest.Start.Level = 0
-	nest.Start.Visited = true
+	switch from {
+	case nest.Start:
+		from.Level = 0
+	case nest.End:
+		from.CoLevel = 0
+	}
+	from.Visited = true
 	unvisited := len(nest.Rooms) - 1
 	for unvisited > 0 {
 		for _, r := range nest.Rooms {
@@ -21,7 +32,12 @@ func LevelFinder(nest *Nest) {
 				for _, s := range r.Neighbors {
 					if s.Visited {
 						flag = true
-						r.Level = Min(r.Level, s.Level+1)
+						switch from {
+						case nest.Start:
+							r.Level = Min(r.Level, s.Level+1)
+						case nest.End:
+							r.CoLevel = Min(r.CoLevel, s.CoLevel+1)
+						}
 					}
 				}
 				if flag {
@@ -30,8 +46,15 @@ func LevelFinder(nest *Nest) {
 			}
 		}
 		for _, r := range nest.Rooms {
-			if r.Level < len(nest.Rooms) {
-				r.Visited = true
+			switch from {
+			case nest.Start:
+				if r.Level < len(nest.Rooms) {
+					r.Visited = true
+				}
+			case nest.End:
+				if r.CoLevel < len(nest.Rooms) {
+					r.Visited = true
+				}
 			}
 		}
 	}
