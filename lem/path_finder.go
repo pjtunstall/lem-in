@@ -4,17 +4,6 @@ import "fmt"
 
 var Paths []*Path
 
-// func MakePath(nest *Nest, r *Room) *Path {
-// 	var p Path
-// 	p.Penultimate = r
-// 	steps := 1
-// 	for i := r; i.Predecessor != nil; i = i.Predecessor {
-// 		steps++
-// 	}
-// 	p.Steps = steps
-// 	return &p
-// }
-
 func MaxFlow(nest *Nest) int {
 	for {
 		q := []*Room{nest.Start}
