@@ -11,6 +11,7 @@ type Room struct {
 	Neighbors   []*Room
 	Residual    map[*Room]int
 	Flow        map[*Room]int
+	IsFlowing   bool
 	X           int
 	Y           int
 	Start       bool

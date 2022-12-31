@@ -34,6 +34,7 @@ func PrintFormattedNest(nest *Nest, ants int) {
 			}
 		}
 		fmt.Println()
+		fmt.Println("IS FLOWING?", j.IsFlowing)
 		fmt.Print("SENDING FLOW TO:\t")
 		for i := range j.Neighbors {
 			if j.Flow[j.Neighbors[i]] == 1 {
