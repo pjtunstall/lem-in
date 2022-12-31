@@ -65,8 +65,11 @@ func main() {
 	}
 
 	for _, i := range paths {
-		for _, j := range i {
-			fmt.Print(j, ",")
+		for k, j := range i {
+			fmt.Print(j)
+			if k+1 != len(i) {
+				fmt.Print("-")
+			}
 		}
 		fmt.Println()
 	}
