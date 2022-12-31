@@ -89,7 +89,7 @@ loop:
 				if nest.Rooms[i].Name == pair[1] {
 					u := FindRoom(pair[0], len(nest.Rooms), &nest)
 					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
-					nest.Rooms[i].Residual[u] = 0
+					nest.Rooms[i].Residual[u] = 1
 				}
 			}
 		}

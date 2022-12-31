@@ -45,7 +45,7 @@ func main() {
 	paths := [][]string{}
 	for _, n := range nest.Start.Neighbors {
 		path := []string{nest.Start.Name}
-		if nest.Start.Flow[nest.End] != 1 {
+		if n != nest.End {
 			count := 0
 			for u := n; u != nest.End && count < len(nest.Rooms); {
 				path = append(path, u.Name)
