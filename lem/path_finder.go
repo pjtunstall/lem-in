@@ -46,10 +46,6 @@ func MaxFlow(nest *Nest) int {
 				u.Residual[v] = 0
 				v.Flow[u] = 0
 				v.Residual[u] = 1
-				// if u == findRoom("n", len(nest.Rooms), nest) && v == findRoom("h", len(nest.Rooms), nest) {
-				// 	fmt.Println("Capacity of h to n:", v.Residual[u])
-				// 	fmt.Println("Flow from n to h:", u.Flow[v])
-				// }
 				v = u
 			}
 			fmt.Println()

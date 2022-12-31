@@ -32,6 +32,7 @@ func main() {
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
 
+	fmt.Println()
 	maxFlow := lem.MaxFlow(&nest)
 	fmt.Printf("\nMax Flow: %v\n", maxFlow)
 	if maxFlow == 0 {
