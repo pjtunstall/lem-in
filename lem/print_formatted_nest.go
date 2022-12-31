@@ -27,6 +27,27 @@ func PrintFormattedNest(nest *Nest, ants int) {
 			}
 		}
 		fmt.Println()
+		fmt.Print("Capacity to:\t")
+		for i := range j.Neighbors {
+			if j.Residual[j.Neighbors[i]] == 1 {
+				fmt.Print(j.Neighbors[i].Name, ", ")
+			}
+		}
+		fmt.Println()
+		fmt.Print("SENDING FLOW TO:\t")
+		for i := range j.Neighbors {
+			if j.Flow[j.Neighbors[i]] == 1 {
+				fmt.Print(j.Neighbors[i].Name, ", ")
+			}
+		}
+		fmt.Println()
+		fmt.Print("RECEIVING FLOW FROM:\t")
+		for _, i := range j.Neighbors {
+			if i.Flow[j] == 1 {
+				fmt.Print(i.Name, ", ")
+			}
+		}
+		fmt.Println()
 		fmt.Printf("Coordinates:\t(%v, %v)\n", j.X, j.Y)
 		if i < len(nest.Rooms)-1 {
 			fmt.Println()

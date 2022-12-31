@@ -32,40 +32,41 @@ func main() {
 	fmt.Printf("%v\n", textFile)
 	lem.PrintFormattedNest(&nest, ants)
 
-	lem.LevelFinder(&nest, nest.Start)
-	lem.LevelFinder(&nest, nest.End)
-	fmt.Println()
-
-	for i := 0; i < len(nest.Rooms)+1; i++ {
-		for _, r := range nest.Rooms {
-			if r.Level == i {
-				fmt.Printf("%v, distance from start: %v\n", r.Name, r.Level)
-			}
-		}
+	maxFlow := lem.MaxFlow(&nest)
+	fmt.Printf("\nMax Flow: %v\n", maxFlow)
+	if maxFlow == 0 {
+		return
 	}
 
-	fmt.Println()
-
-	for i := 0; i < len(nest.Rooms)+1; i++ {
-		for _, r := range nest.Rooms {
-			if r.CoLevel == i {
-				fmt.Printf("%v, distance from end: %v\n", r.Name, r.CoLevel)
-			}
-		}
-	}
+	lem.PrintFormattedNest(&nest, ants)
 
 	fmt.Print("\nPaths:\n")
-
-	paths := lem.Scout(&nest)
-
-	for _, path := range paths {
-		pathString := ""
-		if path.Steps != 1 {
-			for room := path.Penultimate; room.Predecessor != nil; room = room.Predecessor {
-				pathString = room.Name + "-" + pathString
+	paths := [][]string{}
+	for _, n := range nest.Start.Neighbors {
+		path := []string{nest.Start.Name}
+		if nest.Start.Flow[nest.End] != 1 {
+			count := 0
+			for u := n; u != nest.End && count < len(nest.Rooms); {
+				path = append(path, u.Name)
+				for _, r := range u.Neighbors {
+					if u.Flow[r] == 1 {
+						u = r
+					} else {
+						count++
+					}
+				}
 			}
 		}
-		fmt.Printf("%v-%v%v, steps: %v\n", nest.Start.Name, pathString, nest.End.Name, path.Steps)
+		path = append(path, nest.End.Name)
+		if nest.Start.Flow[n] == 1 {
+			paths = append(paths, path)
+		}
+	}
 
+	for _, i := range paths {
+		for _, j := range i {
+			fmt.Print(j, ",")
+		}
+		fmt.Println()
 	}
 }

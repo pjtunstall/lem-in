@@ -28,10 +28,12 @@ func newRoom(row string) (*Room, bool) {
 	nameRoom(a[0], &room)
 	room.X = x
 	room.Y = y
+	room.Residual = make(map[*Room]int)
+	room.Flow = make(map[*Room]int)
 	return &room, problem
 }
 
-func findRoom(name string, counter int, nest *Nest) *Room {
+func FindRoom(name string, counter int, nest *Nest) *Room {
 	if nest.Rooms[counter-1].Name == name {
 		return nest.Rooms[counter-1]
 	}
@@ -39,7 +41,7 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 		panic("Coundn't find a room of that name.")
 	}
 	counter--
-	return findRoom(name, counter, nest)
+	return FindRoom(name, counter, nest)
 }
 
 func Rooms(text []string) (Nest, bool) {
@@ -80,10 +82,14 @@ loop:
 			if !strings.Contains(text[j], "#") {
 				pair := strings.Split(text[j], "-")
 				if nest.Rooms[i].Name == pair[0] {
-					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[1], len(nest.Rooms), &nest))
+					v := FindRoom(pair[1], len(nest.Rooms), &nest)
+					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
+					nest.Rooms[i].Residual[v] = 1
 				}
 				if nest.Rooms[i].Name == pair[1] {
-					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, findRoom(pair[0], len(nest.Rooms), &nest))
+					u := FindRoom(pair[0], len(nest.Rooms), &nest)
+					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
+					nest.Rooms[i].Residual[u] = 0
 				}
 			}
 		}

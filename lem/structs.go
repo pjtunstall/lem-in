@@ -7,18 +7,15 @@ type Nest struct {
 }
 
 type Room struct {
-	Name         string
-	Neighbors    []*Room
-	X            int
-	Y            int
-	Start        bool
-	End          bool
-	Visited      bool
-	PathNode     bool
-	CurrentLevel bool
-	Predecessor  *Room
-	Level        int
-	CoLevel      int
+	Name        string
+	Neighbors   []*Room
+	Residual    map[*Room]int
+	Flow        map[*Room]int
+	X           int
+	Y           int
+	Start       bool
+	End         bool
+	Predecessor *Room
 }
 
 type Path struct {
