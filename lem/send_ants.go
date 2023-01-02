@@ -27,6 +27,7 @@ func SendAnts(paths []*Path, nest *Nest, ants int) {
 				if a == 0 {
 					return
 				}
+				break
 			}
 		}
 	}

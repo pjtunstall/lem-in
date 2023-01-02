@@ -20,7 +20,8 @@ type Room struct {
 }
 
 type Path struct {
-	Second *Room
-	Rooms  []*Room
-	Ants   int
+	Second   *Room
+	Rooms    []*Room
+	Ants     int
+	FirstAnt int
 }

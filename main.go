@@ -31,27 +31,15 @@ func main() {
 	}
 	fmt.Printf("%v", textFile)
 
-	// lem.PrintFormattedNest(&nest, ants)
-
 	// The functions MaxFlow, PathFinder, and PrintPaths need to be called in this order.
 
 	maxFlow := lem.MaxFlow(&nest)
-	// fmt.Printf("\n\nMax Flow: %v\n", maxFlow)
 	if maxFlow == 0 {
 		fmt.Println("No paths found.")
 		return
 	}
-
-	// lem.PrintFormattedNest(&nest, ants)
-
-	fmt.Print("\n\nPaths:\n")
 	paths := lem.PathFinder(&nest)
-	lem.PrintPaths(paths, &nest)
-
-	fmt.Println()
+	fmt.Print("\n\n")
 	lem.SendAnts(paths, &nest, ants)
-	for _, p := range paths {
-		fmt.Println(p.Rooms[1].Name, len(p.Rooms), p.Ants)
-	}
-	// lem.PrintTurns(paths, &nest, ants)
+	lem.PrintTurns(paths, &nest, ants)
 }

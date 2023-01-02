@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+// For testing. Not used in finished program.
+
 func PrintFormattedNest(nest *Nest, ants int) {
 	fmt.Printf("\nNumber of ants: %v\n", ants)
 	for i := 0; i < ants; i++ {
