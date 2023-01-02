@@ -29,48 +29,29 @@ func main() {
 	if problem {
 		return
 	}
-	fmt.Printf("%v\n", textFile)
-	lem.PrintFormattedNest(&nest, ants)
+	fmt.Printf("%v", textFile)
 
-	fmt.Println()
+	// lem.PrintFormattedNest(&nest, ants)
+
+	// The functions MaxFlow, PathFinder, and PrintPaths need to be called in this order.
+
 	maxFlow := lem.MaxFlow(&nest)
-	fmt.Printf("\nMax Flow: %v\n", maxFlow)
+	// fmt.Printf("\n\nMax Flow: %v\n", maxFlow)
 	if maxFlow == 0 {
+		fmt.Println("No paths found.")
 		return
 	}
 
-	lem.PrintFormattedNest(&nest, ants)
+	// lem.PrintFormattedNest(&nest, ants)
 
-	fmt.Print("\nPaths:\n")
-	paths := [][]string{}
-	for _, n := range nest.Start.Neighbors {
-		path := []string{nest.Start.Name}
-		if n != nest.End {
-			count := 0
-			for u := n; u != nest.End && count < len(nest.Rooms); {
-				path = append(path, u.Name)
-				for _, r := range u.Neighbors {
-					if u.Flow[r] == 1 {
-						u = r
-					} else {
-						count++
-					}
-				}
-			}
-		}
-		path = append(path, nest.End.Name)
-		if nest.Start.Flow[n] == 1 {
-			paths = append(paths, path)
-		}
-	}
+	fmt.Print("\n\nPaths:\n")
+	paths := lem.PathFinder(&nest)
+	lem.PrintPaths(paths, &nest)
 
-	for _, i := range paths {
-		for k, j := range i {
-			fmt.Print(j)
-			if k+1 != len(i) {
-				fmt.Print("-")
-			}
-		}
-		fmt.Println()
+	fmt.Println()
+	lem.SendAnts(paths, &nest, ants)
+	for _, p := range paths {
+		fmt.Println(p.Rooms[1].Name, len(p.Rooms), p.Ants)
 	}
+	// lem.PrintTurns(paths, &nest, ants)
 }

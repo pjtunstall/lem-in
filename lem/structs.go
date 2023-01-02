@@ -20,6 +20,7 @@ type Room struct {
 }
 
 type Path struct {
-	Penultimate *Room
-	Steps       int
+	Second *Room
+	Rooms  []*Room
+	Ants   int
 }

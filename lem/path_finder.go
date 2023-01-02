@@ -1,6 +1,9 @@
 package lem
 
-import "fmt"
+import (
+	"fmt"
+	"sort"
+)
 
 var Paths []*Path
 
@@ -36,7 +39,7 @@ func MaxFlow(nest *Nest) int {
 			nest.End.Predecessor.IsFlowing = true
 			nest.End.IsFlowing = true
 			for v := nest.End.Predecessor; !v.Start; {
-				fmt.Printf("%v<--", v.Name)
+				// fmt.Printf("%v<--", v.Name)
 				u := v.Predecessor
 				u.Flow[v] = (v.Flow[u] + 1) % 2
 				if u.Flow[v] == 1 {
@@ -50,7 +53,6 @@ func MaxFlow(nest *Nest) int {
 				v.Residual[u] = 1
 				v = u
 			}
-			fmt.Println()
 		} else {
 			break
 		}
@@ -60,4 +62,46 @@ func MaxFlow(nest *Nest) int {
 		flow += n.Flow[nest.End]
 	}
 	return flow
+}
+
+func PathFinder(nest *Nest) []*Path {
+	paths := []*Path{}
+	for _, n := range nest.Start.Neighbors {
+		path := Path{
+			Second: n,
+			Rooms:  []*Room{nest.Start},
+			Ants:   0,
+		}
+		if n != nest.End {
+			count := 0
+			for u := n; u != nest.End && count < len(nest.Rooms); {
+				path.Rooms = append(path.Rooms, u)
+				for _, r := range u.Neighbors {
+					if u.Flow[r] == 1 {
+						u = r
+					} else {
+						count++
+					}
+				}
+			}
+		}
+		path.Rooms = append(path.Rooms, nest.End)
+		if nest.Start.Flow[n] == 1 {
+			paths = append(paths, &path)
+		}
+	}
+	sort.Slice(paths, func(i, j int) bool { return len(paths[i].Rooms) < len(paths[j].Rooms) })
+	return paths
+}
+
+func PrintPaths(paths []*Path, nest *Nest) {
+	for _, i := range paths {
+		for k, j := range i.Rooms {
+			fmt.Print(j.Name)
+			if k+1 != len(i.Rooms) {
+				fmt.Print("-")
+			}
+		}
+		fmt.Println()
+	}
 }

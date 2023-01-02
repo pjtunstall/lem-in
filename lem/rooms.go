@@ -101,7 +101,7 @@ loop:
 				return nest, true
 			}
 		}
-		for j, jj := range nest.Rooms[i].Neighbors {
+		for _, jj := range nest.Rooms[i].Neighbors {
 			if jj.Name == ii.Name {
 				fmt.Println("ERROR: Room links to itself.")
 				return nest, true
@@ -115,14 +115,6 @@ loop:
 			if !match {
 				fmt.Println("ERROR: Link to unknown room.")
 				return nest, true
-			}
-			if j < len(nest.Rooms[i].Neighbors)-1 {
-				for _, kk := range nest.Rooms[i].Neighbors[j+1:] {
-					if jj == kk {
-						fmt.Println("ERROR: Two links between same two rooms.")
-						return nest, true
-					}
-				}
 			}
 		}
 	}
