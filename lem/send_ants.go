@@ -5,30 +5,21 @@ func SendAnts(paths []*Path, nest *Nest, ants int) {
 		paths[0].Ants = ants
 		return
 	}
-	for a := ants; a > 0; {
-		for i := 0; i < len(paths); i++ {
-			if i == len(paths)-1 {
-				paths[i].Ants++
-				a--
-				if a == 0 {
-					return
-				}
-				break
+	paths[0].Ants = 1
+	ants--
+	i := 0
+	for ants > 0 {
+		if len(paths[i].Rooms)+paths[i].Ants > len(paths[i+1].Rooms)+paths[i+1].Ants {
+			paths[i+1].Ants++
+			ants--
+			i++
+			if i+1 == len(paths) {
+				i = 0
 			}
-			counter := 0
-			for j := i + 1; j < len(paths); j++ {
-				if paths[i].Ants+len(paths[i].Rooms) <= paths[j].Ants+len(paths[j].Rooms) {
-					counter++
-				}
-			}
-			if counter == len(paths)-1-i {
-				paths[i].Ants++
-				a--
-				if a == 0 {
-					return
-				}
-				break
-			}
+		} else {
+			paths[i].Ants++
+			ants--
+			i = 0
 		}
 	}
 }
