@@ -96,10 +96,6 @@ loop:
 	}
 	for i, ii := range nest.Rooms {
 		for j, jj := range nest.Rooms {
-			if ii == nil || jj == nil {
-				fmt.Println("ERROR: Link to unknown room.")
-				return nest, true
-			}
 			if ii.Name == jj.Name && j != i {
 				fmt.Println("ERROR: Duplicated room.")
 				return nest, true
