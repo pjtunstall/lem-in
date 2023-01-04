@@ -34,11 +34,11 @@ func newRoom(row string) (*Room, bool) {
 }
 
 func FindRoom(name string, counter int, nest *Nest) *Room {
+	if counter == 0 {
+		return nil
+	}
 	if nest.Rooms[counter-1].Name == name {
 		return nest.Rooms[counter-1]
-	}
-	if counter == 0 {
-		panic("Coundn't find a room of that name.")
 	}
 	counter--
 	return FindRoom(name, counter, nest)
@@ -96,24 +96,22 @@ loop:
 	}
 	for i, ii := range nest.Rooms {
 		for j, jj := range nest.Rooms {
+			if ii == nil || jj == nil {
+				fmt.Println("ERROR: Link to unknown room.")
+				return nest, true
+			}
 			if ii.Name == jj.Name && j != i {
 				fmt.Println("ERROR: Duplicated room.")
 				return nest, true
 			}
 		}
 		for _, jj := range nest.Rooms[i].Neighbors {
-			if jj.Name == ii.Name {
-				fmt.Println("ERROR: Room links to itself.")
+			if ii == nil || jj == nil {
+				fmt.Println("ERROR: Link to unknown room.")
 				return nest, true
 			}
-			match := false
-			for _, kk := range nest.Rooms {
-				if jj.Name == kk.Name {
-					match = true
-				}
-			}
-			if !match {
-				fmt.Println("ERROR: Link to unknown room.")
+			if jj.Name == ii.Name {
+				fmt.Println("ERROR: Room links to itself.")
 				return nest, true
 			}
 		}
