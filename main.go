@@ -29,12 +29,12 @@ func main() {
 	if problem {
 		return
 	}
-	fmt.Printf("%v\n\n", textFile)
 	if lem.MaxFlow(&nest) == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}
 	paths := lem.PathFinder(&nest)
+	fmt.Printf("%v\n\n", textFile)
 	lem.SendAnts(paths, &nest, ants)
 	lem.PrintTurns(paths, &nest, ants)
 }
