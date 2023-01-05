@@ -34,7 +34,7 @@ func main() {
 		return
 	}
 	paths := lem.PathFinder(&nest)
-	fmt.Printf("%v\n\n", textFile)
 	lem.SendAnts(paths, &nest, ants)
+	fmt.Printf("%v\n\n", textFile)
 	lem.PrintTurns(paths, &nest, ants)
 }
