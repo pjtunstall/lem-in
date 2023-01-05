@@ -30,7 +30,8 @@ func main() {
 		return
 	}
 
-	// The functions MaxFlow, PathFinder, and PrintPaths need to be called in this order.
+	// The functions MaxFlow, PathFinder (and PrintPaths if used)
+	// need to be called in this order.
 
 	maxFlow := lem.MaxFlow(&nest)
 	if maxFlow == 0 {

@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+// For testing. Not used in finished program.
+
 func PrintPaths(paths []*Path, nest *Nest) {
 	for _, i := range paths {
 		for k, j := range i.Rooms {

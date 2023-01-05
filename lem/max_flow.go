@@ -14,7 +14,7 @@ func MaxFlow(nest *Nest) int {
 				q = q[:0]
 			}
 			for _, v := range u.Neighbors {
-				if !v.Start && u.Residual[v] == 1 && v.Predecessor == nil {
+				if !v.Start && u.Residual[v] > 0 && v.Predecessor == nil {
 					if u.Start || !u.IsFlowing || v.Flow[u] == 1 {
 						if v.Flow[u] == 1 {
 							v.IsFlowing = false
@@ -32,9 +32,10 @@ func MaxFlow(nest *Nest) int {
 			nest.End.Predecessor.IsFlowing = true
 			nest.End.IsFlowing = true
 			for v := nest.End.Predecessor; !v.Start; {
+				// Uncomment to see paths in residual graph:
 				// fmt.Printf("%v<--", v.Name)
 				u := v.Predecessor
-				u.Flow[v] = (v.Flow[u] + 1) % 2
+				u.Flow[v] = 1 ^ v.Flow[u]
 				if u.Flow[v] == 1 {
 					u.IsFlowing = true
 					v.IsFlowing = true
@@ -46,6 +47,8 @@ func MaxFlow(nest *Nest) int {
 				v.Residual[u] = 1
 				v = u
 			}
+			// Uncomment to print paths in residual graph on separate lines:
+			// fmt.Println()
 		} else {
 			break
 		}
