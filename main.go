@@ -29,18 +29,13 @@ func main() {
 	if problem {
 		return
 	}
-
-	// The functions MaxFlow, PathFinder (and PrintPaths if used)
-	// need to be called in this order.
-
+	fmt.Printf("%v\n\n", textFile)
 	maxFlow := lem.MaxFlow(&nest)
 	if maxFlow == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}
-	fmt.Printf("%v", textFile)
 	paths := lem.PathFinder(&nest)
-	fmt.Print("\n\n")
 	lem.SendAnts(paths, &nest, ants)
 	lem.PrintTurns(paths, &nest, ants)
 }

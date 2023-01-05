@@ -6,6 +6,15 @@ import (
 	"strings"
 )
 
+func firstTunnel(text []string) int {
+	for i := 5; i < len(text); i++ {
+		if strings.Contains(text[i], "-") {
+			return i
+		}
+	}
+	return 0
+}
+
 func nameRoom(name string, room *Room) *Room {
 	room.Name = name
 	return room
@@ -28,7 +37,6 @@ func newRoom(row string) (*Room, bool) {
 	nameRoom(a[0], &room)
 	room.X = x
 	room.Y = y
-	room.Residual = make(map[*Room]int)
 	room.Flow = make(map[*Room]int)
 	return &room, problem
 }
@@ -46,7 +54,7 @@ func FindRoom(name string, counter int, nest *Nest) *Room {
 
 func Rooms(text []string) (Nest, bool) {
 	var nest Nest
-	n := FirstTunnel(text)
+	n := firstTunnel(text)
 loop:
 	for i := 1; i < n; i++ {
 		switch {
@@ -84,12 +92,10 @@ loop:
 				if nest.Rooms[i].Name == pair[0] {
 					v := FindRoom(pair[1], len(nest.Rooms), &nest)
 					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
-					nest.Rooms[i].Residual[v] = 1
 				}
 				if nest.Rooms[i].Name == pair[1] {
 					u := FindRoom(pair[0], len(nest.Rooms), &nest)
 					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
-					nest.Rooms[i].Residual[u] = 1
 				}
 			}
 		}

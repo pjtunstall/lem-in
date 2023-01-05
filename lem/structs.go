@@ -9,9 +9,7 @@ type Nest struct {
 type Room struct {
 	Name        string
 	Neighbors   []*Room
-	Residual    map[*Room]int
 	Flow        map[*Room]int
-	IsFlowing   bool
 	X           int
 	Y           int
 	Start       bool
