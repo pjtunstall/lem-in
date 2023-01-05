@@ -30,8 +30,7 @@ func main() {
 		return
 	}
 	fmt.Printf("%v\n\n", textFile)
-	maxFlow := lem.MaxFlow(&nest)
-	if maxFlow == 0 {
+	if lem.MaxFlow(&nest) == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}

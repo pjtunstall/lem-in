@@ -23,15 +23,11 @@ func MaxFlow(nest *Nest) int {
 		if nest.End.Predecessor != nil {
 			nest.End.Predecessor.Flow[nest.End] = 1
 			for v := nest.End.Predecessor; !v.Start; {
-				// Uncomment to see paths in residual graph:
-				// fmt.Printf("%v<--", v.Name)
 				u := v.Predecessor
 				u.Flow[v] = 1 ^ v.Flow[u]
 				v.Flow[u] = 0
 				v = u
 			}
-			// Uncomment to print paths in residual graph on separate lines:
-			// fmt.Println()
 		} else {
 			break
 		}
