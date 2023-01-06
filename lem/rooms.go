@@ -41,7 +41,7 @@ func newRoom(row string) (*Room, bool) {
 	return &room, problem
 }
 
-func FindRoom(name string, counter int, nest *Nest) *Room {
+func findRoom(name string, counter int, nest *Nest) *Room {
 	if counter == 0 {
 		return nil
 	}
@@ -49,7 +49,7 @@ func FindRoom(name string, counter int, nest *Nest) *Room {
 		return nest.Rooms[counter-1]
 	}
 	counter--
-	return FindRoom(name, counter, nest)
+	return findRoom(name, counter, nest)
 }
 
 func Rooms(text []string) (Nest, bool) {
@@ -90,11 +90,11 @@ loop:
 			if !strings.Contains(text[j], "#") {
 				pair := strings.Split(text[j], "-")
 				if nest.Rooms[i].Name == pair[0] {
-					v := FindRoom(pair[1], len(nest.Rooms), &nest)
+					v := findRoom(pair[1], len(nest.Rooms), &nest)
 					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
 				}
 				if nest.Rooms[i].Name == pair[1] {
-					u := FindRoom(pair[0], len(nest.Rooms), &nest)
+					u := findRoom(pair[0], len(nest.Rooms), &nest)
 					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
 				}
 			}
