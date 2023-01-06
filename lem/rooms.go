@@ -37,7 +37,7 @@ func newRoom(row string) (*Room, bool) {
 	nameRoom(a[0], &room)
 	room.X = x
 	room.Y = y
-	room.Flow = make(map[*Room]int)
+	room.Flow = make(map[*Room]bool)
 	return &room, problem
 }
 

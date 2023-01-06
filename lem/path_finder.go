@@ -7,7 +7,7 @@ import (
 func PathFinder(nest *Nest) []*Path {
 	paths := []*Path{}
 	for _, n := range nest.Start.Neighbors {
-		if nest.Start.Flow[n] == 1 {
+		if nest.Start.Flow[n] {
 			path := Path{
 				Second: n,
 				Rooms:  []*Room{nest.Start},
@@ -17,14 +17,14 @@ func PathFinder(nest *Nest) []*Path {
 				for u := n; u != nest.End; {
 					path.Rooms = append(path.Rooms, u)
 					for _, r := range u.Neighbors {
-						if u.Flow[r] == 1 {
+						if u.Flow[r] {
 							u = r
 						}
 					}
 				}
 			}
 			path.Rooms = append(path.Rooms, nest.End)
-			if nest.Start.Flow[n] == 1 {
+			if nest.Start.Flow[n] {
 				paths = append(paths, &path)
 			}
 		}
