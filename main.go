@@ -33,7 +33,7 @@ func main() {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}
-	paths := lem.PathFinder(&nest)
+	paths := lem.PathCollector(&nest)
 	lem.SendAnts(paths, &nest, ants)
 	fmt.Printf("%v\n\n", textFile)
 	lem.PrintTurns(paths, &nest, ants)

@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-func PathFinder(nest *Nest) []*Path {
+func PathCollector(nest *Nest) []*Path {
 	paths := []*Path{}
 	for _, n := range nest.Start.Neighbors {
 		if nest.Start.Flow[n] {
@@ -13,13 +13,11 @@ func PathFinder(nest *Nest) []*Path {
 				Rooms:  []*Room{nest.Start},
 				Ants:   0,
 			}
-			if n != nest.End {
-				for u := n; u != nest.End; {
-					path.Rooms = append(path.Rooms, u)
-					for _, r := range u.Neighbors {
-						if u.Flow[r] {
-							u = r
-						}
+			for u := n; u != nest.End; {
+				path.Rooms = append(path.Rooms, u)
+				for _, r := range u.Neighbors {
+					if u.Flow[r] {
+						u = r
 					}
 				}
 			}

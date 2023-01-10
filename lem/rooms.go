@@ -55,11 +55,8 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 func Rooms(text []string) (Nest, bool) {
 	var nest Nest
 	n := firstTunnel(text)
-loop:
 	for i := 1; i < n; i++ {
 		switch {
-		case strings.Contains(text[i], "-"):
-			break loop
 		case strings.Contains(text[i], "#"):
 		default:
 			r, problem := newRoom(text[i])
