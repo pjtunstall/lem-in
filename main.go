@@ -25,7 +25,7 @@ func main() {
 		fmt.Println("ERROR: Invalid number of ants.")
 		return
 	}
-	nest, problem := lem.Rooms(text)
+	nest, problem := lem.ParseNest(text)
 	if problem {
 		return
 	}
