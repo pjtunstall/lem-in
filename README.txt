@@ -3,7 +3,8 @@ LEM-IN
 1. PROBLEM
 2. SOLUTION
 3. IMPLEMENTATION
-4. BIBLIOGRAPHY
+4. CURIOSITIES
+5. BIBLIOGRAPHY
 
 1. PROBLEM
 
@@ -28,7 +29,7 @@ Aside from some error checking, the task is essentially divided into five functi
 * ParseNest parses the nest into structs of type Nest and Room.
 * MaxFlow uses BFS to find paths according to Edmonds-Karp.
 * PathCollector gathers these paths into a slice of items of struct type Path.
-* SendAnts assigns the ants according to the scheme described by [D].
+* SendAnts assigns ants to paths according to the scheme described by [D].
 * PrintTurns formats the result in the style of the audit solutions.
 
 Most important conceptually is MaxFlow. This function implements the Karp-Edmonds algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per [S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity. We implement the queue as a slice of (pointers to) rooms. The BFS fans out from "start" till a shortest route to "end" is found, subject to the residual capacity constraints. As the search moves on from node "u" to node "v", say, we set the "v.Predecessor" field equal to "u" to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the "end" has been found because then "end.Predecessor != nil". This results in a linked list of rooms, which can now be traced back from "end" to "start" and "u.Flow[v]" set to "true" everywhere along the list. These Flow fields remember the provisional paths after each step of the path search, while the Predecessor fields of all rooms are reset to "nil" at the start of the next interation.
