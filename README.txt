@@ -26,14 +26,14 @@ Note that Edmonds-Karp (and Ford-Fulkerson in general) doesn't place any capacit
 Aside from some error checking, the task is essentially divided into five functions:
 
 * ParseNest parses the nest into structs of type Nest and Room.
-* MaxFlow uses BFS to find paths and send provisional flow along them.
+* MaxFlow uses BFS to find paths according to Edmonds-Karp.
 * PathCollector gathers these paths into a slice of items of struct type Path.
 * SendAnts assigns the ants according to the scheme described by [D].
 * PrintTurns formats the result in the style of the audit solutions.
 
-Most important conceptually is MaxFlow, which implements the Karp-Edmonds algorithm, streamlined to our case of unit capacity on all edges but with the additional constraint of node capacity. We implement the queue as a slice of (pointers to) rooms. The BFS fans out from "start" till a shortest route to "end" is found, subject to the residual capacity constraints. As the search moves on from node "u" to node "v", say, we set the "v.Predecessor" field equal to "u" to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited at a particular iteration of the search for paths; it signals when the "end" has been found because then "end.Predecessor != nil"; and finally, it results in a linked list of rooms, which can now be traced back from "end" to "start" and "u.Flow[v]" set to "true" everywhere along the list.
+Most important conceptually is MaxFlow. This function implements the Karp-Edmonds algorithm, streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity. We implement the queue as a slice of (pointers to) rooms. The BFS fans out from "start" till a shortest route to "end" is found, subject to the residual capacity constraints. As the search moves on from node "u" to node "v", say, we set the "v.Predecessor" field equal to "u" to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the "end" has been found because then "end.Predecessor != nil". This results in a linked list of rooms, which can now be traced back from "end" to "start" and "u.Flow[v]" set to "true" everywhere along the list. These Flow fields remember the provisional paths after each step of the path search, while the Predecessor fields of all rooms are reset to "nil" at the start of the next interation.
 
-Future iterations of the path search revise and augment, as described above. When no more paths can be found without breaking the capacity constraints, the PathCollector function turns the resulting linked lists of flow into objects of struct type Path. The rooms belonging to each path, p, are stored in a slice in the p.Room field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
+Future iterations of the path search revise and augment the flow, as described above. When no more paths can be found without breaking the capacity constraints, the PathCollector function turns the resulting linked lists of flow into objects of struct type Path. The rooms belonging to each path, p, are stored in a slice in the p.Room field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
 
 4. CURIOSITIES
 
