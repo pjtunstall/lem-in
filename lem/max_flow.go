@@ -25,11 +25,12 @@ func MaxFlow(nest *Nest) int {
 				}
 			}
 			for _, v := range u.Neighbors {
-				if !v.Start && (!u.Flow[v] || v.Flow[u]) && v.Predecessor == nil {
-					if !uIsFlowing || v.Flow[u] || u.Flow[u.Predecessor] || u.Start {
-						q = append(q, v)
-						v.Predecessor = u
-					}
+				neighboringRoomIsUnvisited := v.Predecessor == nil
+				tunnelCapacityPermits := v.Flow[u] || !u.Flow[v]
+				roomCapacityPermits := !uIsFlowing || v.Flow[u] || u.Start || u.Flow[u.Predecessor]
+				if !v.Start && neighboringRoomIsUnvisited && tunnelCapacityPermits && roomCapacityPermits {
+					q = append(q, v)
+					v.Predecessor = u
 				}
 			}
 		}
