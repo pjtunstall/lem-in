@@ -1,7 +1,7 @@
 package lem
 
-func MaxFlow(nest *Nest) int {
-	for {
+func MaxFlow(nest *Nest, ants int) int {
+	for i := 1; i <= ants; i++ {
 		q := []*Room{nest.Start}
 		for _, r := range nest.Rooms {
 			r.Predecessor = nil
@@ -37,7 +37,7 @@ func MaxFlow(nest *Nest) int {
 		if nest.End.Predecessor != nil {
 			nest.End.Predecessor.Flow[nest.End] = true
 			for v := nest.End.Predecessor; !v.Start; {
-				// Uncomment this and the Println below to see paths in the residual graph.
+				// Uncomment this and the Println below to see paths in the residual graph as they're found.
 				// fmt.Printf("%v <--", v.Name)
 				u := v.Predecessor
 				u.Flow[v] = !v.Flow[u]
