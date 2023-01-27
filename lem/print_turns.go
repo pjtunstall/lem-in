@@ -9,13 +9,17 @@ func Min(a, b int) int {
 	return b
 }
 
-func PrintTurns(paths []*Path, nest *Nest, ants int) {
+func LabelFirstAnts(paths []*Path, nest *Nest) {
 	paths[0].FirstAnt = 1
 	if len(paths) > 1 {
 		for i := 1; i < len(paths); i++ {
 			paths[i].FirstAnt = paths[i-1].FirstAnt + paths[i-1].Ants
 		}
 	}
+}
+
+func PrintTurns(paths []*Path, nest *Nest, ants int) {
+	LabelFirstAnts(paths, nest)
 	for row := 1; ants > 0; row++ {
 		for _, p := range paths {
 			for i := p.FirstAnt; i <= p.Ants+p.FirstAnt-1; i++ {

@@ -20,21 +20,24 @@ func main() {
 		fmt.Println("ERROR: Empty file.")
 		return
 	}
-	ants, err := strconv.Atoi(text[0])
+	firstNonCommentLine := 0
+	for i := 0; text[i][0] == '#'; i++ {
+		firstNonCommentLine++
+	}
+	ants, err := strconv.Atoi(text[firstNonCommentLine])
 	if err != nil || ants < 1 {
 		fmt.Println("ERROR: Invalid number of ants.")
 		return
 	}
-	nest, problem := lem.ParseNest(text)
+	nest, problem := lem.ParseNest(text, firstNonCommentLine)
 	if problem {
 		return
 	}
-	if lem.MaxFlow(&nest, ants) == 0 {
+	flow, paths := lem.MaxFlow(&nest, ants)
+	if flow == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}
-	paths := lem.PathCollector(&nest)
-	lem.SendAnts(paths, &nest, ants)
 	fmt.Printf("%v\n\n", textFile)
 	lem.PrintTurns(paths, &nest, ants)
 }

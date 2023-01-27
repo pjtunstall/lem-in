@@ -1,6 +1,12 @@
 package lem
 
-func MaxFlow(nest *Nest, ants int) int {
+func CountTurns(paths []*Path, nest *Nest, ants int) int {
+	return len(paths[0].Rooms) + paths[0].Ants - 2
+}
+
+func MaxFlow(nest *Nest, ants int) (int, []*Path) {
+	numberOfTurns := len(nest.Rooms) + ants - 2
+	var paths []*Path
 	for i := 1; i <= ants; i++ {
 		q := []*Room{nest.Start}
 		for _, r := range nest.Rooms {
@@ -44,6 +50,14 @@ func MaxFlow(nest *Nest, ants int) int {
 				v.Flow[u] = false
 				v = u
 			}
+			newPaths := PathCollector(nest)
+			SendAnts(newPaths, nest, ants)
+			newNumberOfTurns := CountTurns(newPaths, nest, ants)
+			if newNumberOfTurns > numberOfTurns {
+				break
+			}
+			numberOfTurns = newNumberOfTurns
+			paths = newPaths
 		} else {
 			break
 		}
@@ -55,5 +69,5 @@ func MaxFlow(nest *Nest, ants int) int {
 			flow++
 		}
 	}
-	return flow
+	return flow, paths
 }

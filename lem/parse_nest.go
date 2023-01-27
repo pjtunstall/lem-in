@@ -8,7 +8,7 @@ import (
 
 func findFirstLineWithTunnel(text []string) int {
 	for i := 5; i < len(text); i++ {
-		if strings.Contains(text[i], "-") {
+		if strings.Contains(text[i], "-") && !strings.Contains(text[i], "#") {
 			return i
 		}
 	}
@@ -52,10 +52,10 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 	return findRoom(name, counter, nest)
 }
 
-func ParseNest(text []string) (Nest, bool) {
+func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	var nest Nest
 	n := findFirstLineWithTunnel(text)
-	for i := 1; i < n; i++ {
+	for i := firstNonCommentLine + 1; i < n; i++ {
 		switch {
 		case strings.Contains(text[i], "#"):
 		default:

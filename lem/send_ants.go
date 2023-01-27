@@ -1,6 +1,9 @@
 package lem
 
 func SendAnts(paths []*Path, nest *Nest, ants int) {
+	for _, p := range paths {
+		p.Ants = 0
+	}
 	if len(paths) == 1 {
 		paths[0].Ants = ants
 		return
