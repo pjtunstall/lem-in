@@ -21,7 +21,7 @@ func main() {
 		return
 	}
 	firstNonCommentLine := 0
-	for i := 0; text[i][0] == '#'; i++ {
+	for i := 0; text[i] == "" || text[i][0] == '#'; i++ {
 		firstNonCommentLine++
 	}
 	ants, err := strconv.Atoi(text[firstNonCommentLine])

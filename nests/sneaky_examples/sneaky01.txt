@@ -1,0 +1,46 @@
+#Like audit example01 except with only one ant,
+#and 0 and t are swapped in the list of links.
+#Originally my program found hne, then tEam,
+#which would be fine because the short path
+#hne would still be available. But with this
+#modification, it would find hne, then 0onhAck
+#in the residual graph, to make the two longer
+#paths 0one and hAck. So unless the search for
+#paths is stopped at one path, this example
+#would fail to find the optimal solution for
+#just one ant.
+
+1
+##start
+start 1 6
+0 4 8
+o 6 8
+n 6 6
+e 8 4
+t 1 9
+E 5 9
+a 8 9
+m 8 6
+h 4 6
+A 5 2
+c 8 1
+k 11 2
+##end
+end 11 6
+start-t
+n-e
+#a-m
+A-c
+t-o
+E-a
+k-end
+start-h
+o-n
+m-end
+0-E
+start-0
+h-A
+e-end
+c-k
+n-m
+h-n

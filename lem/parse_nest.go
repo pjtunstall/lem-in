@@ -58,6 +58,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	for i := firstNonCommentLine + 1; i < n; i++ {
 		switch {
 		case strings.Contains(text[i], "#"):
+		case text[i] == "":
 		default:
 			r, problem := newRoom(text[i])
 			if problem {
@@ -84,7 +85,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	}
 	for i := 0; i < len(nest.Rooms); i++ {
 		for j := n; j < len(text); j++ {
-			if !strings.Contains(text[j], "#") {
+			if !(text[j] == "") && !strings.Contains(text[j], "#") {
 				pair := strings.Split(text[j], "-")
 				if nest.Rooms[i].Name == pair[0] {
 					v := findRoom(pair[1], len(nest.Rooms), &nest)
