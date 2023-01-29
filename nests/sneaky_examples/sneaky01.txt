@@ -1,5 +1,5 @@
 #Like audit example01 except with only one ant,
-#and 0 and t are swapped in the list of links.
+#and the a-m link cut, blocking path tEam.
 #Originally my program found hne, then tEam,
 #which would be fine because the short path
 #hne would still be available. But with this
@@ -31,13 +31,13 @@ start-t
 n-e
 #a-m
 A-c
-t-o
+0-o
 E-a
 k-end
 start-h
 o-n
 m-end
-0-E
+t-E
 start-0
 h-A
 e-end
