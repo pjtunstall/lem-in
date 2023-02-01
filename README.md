@@ -19,16 +19,20 @@ There are several ways to do this. One is the Ford-Fulkerson method. As original
 
 [S] outlines Ford-Fulkerson and shows a way to adapt this technique to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In `example02`, a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
 
- L1-3 L2-1
- L2-2 L3-3 L4-1
- L2-3 L4-2 L5-3 L6-1
+```
+L1-3 L2-1
+L2-2 L3-3 L4-1
+L2-3 L4-2 L5-3 L6-1
+```
 
 In `example05`, a connection is listed as `D2-E2`, but, in turn four, `L4` moves from `E2` to `D2`:
 
- L1-A0 L4-B0 L6-C0
- L1-A1 L2-A0 L4-B1 L5-B0 L6-C1
- L1-A2 L2-A1 L3-A0 L4-E2 L5-B1 L6-C2 L9-B0
- L1-end L2-A2 L3-A1 L4-D2 L5-E2 L6-C3 L7-A0 L9-B1
+```
+L1-A0 L4-B0 L6-C0
+L1-A1 L2-A0 L4-B1 L5-B0 L6-C1
+L1-A2 L2-A1 L3-A0 L4-E2 L5-B1 L6-C2 L9-B0
+L1-end L2-A2 L3-A1 L4-D2 L5-E2 L6-C3 L7-A0 L9-B1
+```
 
 Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found randomly, it will still work, but there are more detailed algorithms that follow the Ford-Fulkerson method except with better-than-random choice of paths. We use one of these: Edmonds-Karp [W]. At each step, Edmonds-Karp finds a shortest valid path using breadth first search (BFS).
 
@@ -50,13 +54,13 @@ Aside from some error checking, the task is essentially divided into five functi
 
 Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per [S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
 
-We implement the queue as a slice of (pointers to) rooms. The BFS fans out from `start` till a shortest route to `end` is found, subject to the residual capacity constraints. As the search moves on from node `u` to node `v`, say, we set the `v.Predecessor` field equal to `u` to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the `end` has been found because then `end.Predecessor != nil`. This results in a linked list of rooms, which can now be traced back from `end` to `start` and `u.Flow[v]` set to `true` everywhere along the list, except where an edge previously had flow from `v` to `u` (i.e. `v.Flow[u]` was equal to `true`). In that case, the flow is cancelled out: both `u.Flow[v]` and `v.Flow[u]` are set to `false`. It's these Flow fields that will remember the provisional paths after each step of the path search, while the Predecessor fields of all rooms are reset to `nil` at the start of the next iteration.
+We implement the queue as a slice of (pointers to) rooms. The BFS fans out from `start` till a shortest route to `end` is found, subject to the residual capacity constraints. As the search moves on from node `u` to node `v`, say, we set the `v.Predecessor` field equal to `u` to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the `end` has been found because then `end.Predecessor != nil`. This results in a linked list of rooms, which can now be traced back from `end` to `start` and `u.Flow[v]` set to `true` everywhere along the list, except where an edge previously had flow from `v` to `u` (i.e. `v.Flow[u]` was equal to `true`). In that case, the flow is cancelled out: both `u.Flow[v]` and `v.Flow[u]` are set to `false`. It's these Flow fields that will remember the provisional paths after each step of the path search, while the `Predecessor` fields of all rooms are reset to `nil` at the start of the next iteration.
 
-PathCollector turns the resulting linked lists of flow into objects of struct type Path. The rooms belonging to each path, `p`, are stored in a slice in the `p.Room` field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
+`PathCollector` turns the resulting linked lists of flow into objects of struct type `Path`. The rooms belonging to each path, `p`, are stored in a slice in the `p.Room` field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
 
-Future iterations of the path search revise and augment the flow, as described above. When no more paths can be found without breaking the capacity constraints or increasing the number of turns, the slice of paths is returned and used by PrintTurns to output the result.
+Future iterations of the path search revise and augment the flow, as described above. When no more paths can be found without breaking the capacity constraints or increasing the number of turns, the slice of paths is returned and used by `PrintTurns` to output the result.
 
-To summarise PathFinder:
+To summarise `PathFinder`:
 
 1. Set `numberOfTurns` to the maximum possible for any nest: `len(nest.Rooms) + ants - 2` (the number of rooms plus the number of ants minus two).
 2. Begin loop.
@@ -79,17 +83,19 @@ In general, the number of turns taken will be the length of the path with the la
 
 Note that the definition of flow here has been streamlined to suit our case of unit capacity everywhere. More properly, in any flow network (directed or undirected), if `f(u, v)` is the flow from a node `u` to another node `v`, then `f(v, u) = -f(u, v)`. This means that, for a directed graph with unit capacity `c(u, v) = 1` on an edge `(u, v)`, if we send flow along that edge, setting `f(u, v) = 1`, the residual capacity `cf` changes thus:
 
-`cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0`,
-
-`cf(v, u) = c(v, u) - f(v, u) = 0 - (-1) = 1`,
+```
+cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
+cf(v, u) = c(v, u) - f(v, u) = 0 - (-1) = 1,
+```
 
 representing the possibility, on a future attempt to find a path, to send flow in the opposite direction--in other words, to reverse our decision to send flow from `u` to `v`.
 
 On the other hand, for our undirected graph, the capacity is one in both directions: `c(u, v) = c(v, u) = 1`, so if we send flow from `u` to `v`, the residual capacity becomes:
 
-`cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0`,
-
-`cf(v, u) = c(v, u) - f(v, u) = 1 - (-1) = 2`,
+```
+cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
+cf(v, u) = c(v, u) - f(v, u) = 1 - (-1) = 2,
+```
 
 which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` and never `-1`.
 
