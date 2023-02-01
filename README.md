@@ -20,14 +20,19 @@ There are several ways to do this. One is the Ford-Fulkerson method. As original
 [S] outlines Ford-Fulkerson and shows a way to adapt this technique to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In example02, a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
 
 L1-3 L2-1
+
 L2-2 L3-3 L4-1
+
 L2-3 L4-2 L5-3 L6-1
 
 In example05, a connection is listed as `D2-E2`, but, in turn four, `L4` moves from `E2` to `D2`:
 
 L1-A0 L4-B0 L6-C0
+
 L1-A1 L2-A0 L4-B1 L5-B0 L6-C1
+
 L1-A2 L2-A1 L3-A0 L4-E2 L5-B1 L6-C2 L9-B0
+
 L1-end L2-A2 L3-A1 L4-D2 L5-E2 L6-C3 L7-A0 L9-B1
 
 Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found randomly, it will still work, but there are more detailed algorithms that follow the Ford-Fulkerson method except with better-than-random choice of paths. We use one of these: Edmonds-Karp [W]. At each step, Edmonds-Karp finds a shortest valid path using breadth first search (BFS).
@@ -58,22 +63,22 @@ Future iterations of the path search revise and augment the flow, as described a
 
 To summarise PathFinder:
 
-**1. Set `numberOfTurns` to the maximum possible for any nest: `len(nest.Rooms) + ants - 2` (the number of rooms plus the number of ants minus two).**
-**2. Begin loop.**
-**3. Reset `Predecessor` field of all rooms to `nil`.**
-**4. BFS.**
-**5. If `nest.End` has no predecessor, break.**
-**6. Update flow.**
-**7. If this didn't reduce the number of turns, break.**
-**8. Update paths.**
-**9. End loop.**
-**10. Return paths and flow.**
+1. Set `numberOfTurns` to the maximum possible for any nest: `len(nest.Rooms) + ants - 2` (the number of rooms plus the number of ants minus two).
+2. Begin loop.
+3. Reset `Predecessor` field of all rooms to `nil`.
+4. BFS.
+5. If `nest.End` has no predecessor, break.
+6. Update flow.
+7. If this didn't reduce the number of turns, break.
+8. Update paths.
+9. End loop.
+10. Return paths and flow.
 
 And if flow is zero, the `main` function reports that no paths were found.
 
 ## 4. Further Notes
 
-The formula for the maximum possible number of turns comes from the fact that this would occur if the graph consisted of one line of all nodes from `start to `end`. Since the ants are already in `start`, we can subtract one from the number of turns it will take them to move through all the nodes. Since the first ant doesn't have to wait any turns, we can subtract another one, making a total of two. Consider, for example, the simplest case, where the nest consists of just two rooms, `start` and `end` and there is only one ant. Then `len(nest.Rooms) = 2` and `ants = 1`, so the number of turns is `2 + 1 - 2 = 1`.
+The formula for the maximum possible number of turns comes from the fact that this would occur if the graph consisted of one line of all nodes from `start` to `end`. Since the ants are already in `start`, we can subtract one from the number of turns it will take them to move through all the nodes. Since the first ant doesn't have to wait any turns, we can subtract another one, making a total of two. Consider, for example, the simplest case, where the nest consists of just two rooms, `start` and `end` and there is only one ant. Then `len(nest.Rooms) = 2` and `ants = 1`, so the number of turns is `2 + 1 - 2 = 1`.
 
 In general, the number of turns taken will be the length of the path with the largest number of ants (which will be the first and shortest path, according to our way of assigning ants), plus the number of ants minus two.
 
