@@ -119,7 +119,7 @@ One final observation: While parsing the nest, repeated link (assuming this repr
 
 [^D]: Dawson J: [Lem-in: Finding all the paths and deciding which are worth it](https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893). Nov. 19, 2019. Accessed Jan. 1, 2023.
 
-[^S]: Sheffer A: [Caltech Math 6a: Introduction to Discrete Mathematics, Class 14: Various (Flow) Exercises: Problem 6: Vertex Disjoint Paths](http://www.math.caltech.edu/~2014-15/1term/ma006a/class14.pdf). Oct. 2014 Accessed Jan. 1, 2023.
+[^S]: Sheffer A: [Caltech Math 6a: Introduction to Discrete Mathematics, Class 14: Various (Flow) Exercises: Problem 6: Vertex Disjoint Paths](http://www.math.caltech.edu/~2014-15/1term/ma006a/class14.pdf). Oct. 30, 2014 Accessed Jan. 1, 2023.
 
 [^SGD]: Schroeder J, Guedes AP, Duarte EP: [Computing the Minimum Cut and Maximum Flow of Undirected Graphs](https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf). RT-DINF 003/2004. Accessed Jan. 1. 2023.
 
