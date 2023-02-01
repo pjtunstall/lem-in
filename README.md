@@ -17,7 +17,7 @@ We first start looking for a maximum flow (a largest set of compatible paths) th
 
 There are several ways to do this. One is the Ford-Fulkerson method. As originally described for directed graphs, this works by defining an auxiliary network called the residual graph, having the same nodes and edges as the original graph, except that the weight of each edge, known as the residual capacity, is set equal to capacity minus flow. Initially the flow is set to zero. Then, for as many iterations as possible, we find a provisional path (known as an augmenting path) from `start` to `end` (with no cycles) in the residual graph. When such a path is found, we send as much flow as possible along it (always 1 in our case) and adjust the residual capacities accordingly. In this way, we get to push back flow where needed (cancel it out) if we make a less than optimal choice of path. Every new path increases the total flow, hence the name augmenting path. When no more paths are possible, the flow is maximal.
 
-[^S] outlines Ford-Fulkerson and shows a way to adapt this technique to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In [example02](nests/audit_examples/example02), a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
+Schroeder, Guedes, and Duarte[^S] outline Ford-Fulkerson and show a way to adapt this technique to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In [example02](nests/audit_examples/example02), a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
 
 ```
 L1-3 L2-1
@@ -46,13 +46,13 @@ By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution wit
 
 Aside from some error checking, the task is essentially divided into five functions:
 
-* [ParseNest](lem/parse_nest.go) parses the nest into structs of type `Nest` and `Room`.
+* [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
 * [PathFinder](lem/path_finder.go) uses BFS to find paths according to Edmonds-Karp.
-* It calls [PathCollector](lem/path_collector.go) to gather these paths into a slice of items of struct type `Path`.
-* Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by [^D].
+* It calls [PathCollector](lem/path_collector.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
+* Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson[^D].
 * Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
-Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per [^S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
+Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
 
 We implement the queue as a slice of (pointers to) rooms. The BFS fans out from `start` till a shortest route to `end` is found, subject to the residual capacity constraints. As the search moves on from node `u` to node `v`, say, we set the `v.Predecessor` field equal to `u` to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the `end` has been found because then `end.Predecessor != nil`. This results in a linked list of rooms, which can now be traced back from `end` to `start` and `u.Flow[v]` set to `true` everywhere along the list, except where an edge previously had flow from `v` to `u` (i.e. `v.Flow[u]` was equal to `true`). In that case, the flow is cancelled out: both `u.Flow[v]` and `v.Flow[u]` are set to `false`. It's these Flow fields that will remember the provisional paths after each step of the path search, while the `Predecessor` fields of all rooms are reset to `nil` at the start of the next iteration.
 
@@ -81,7 +81,9 @@ The formula for the maximum possible number of turns comes from the fact that th
 
 In general, the number of turns taken will be the length of the path with the largest number of ants (which will be the first and shortest path, according to our way of assigning ants), plus the number of ants minus two.
 
-Note that the definition of flow here has been streamlined to suit our case of unit capacity everywhere. More properly, in any flow network (directed or undirected), if `f(u, v)` is the flow from a node `u` to another node `v`, then `f(v, u) = -f(u, v)`. This means that, for a directed graph with unit capacity `c(u, v) = 1` on an edge `(u, v)`, if we send flow along that edge, setting `f(u, v) = 1`, the residual capacity `cf` changes thus:
+Note that `u.Flow`, for a room `u`, is of type [`map[*Room]bool`](lem/structs.go). This booleam value is not quite what is meant by flow in the formal definition of a flow network. Rather, it's been streamlined to suit our case of unit capacity everywhere.
+
+More properly, in any flow network (directed or undirected), if `f(u, v)` is the flow from a node `u` to another node `v`, then `f(v, u) = -f(u, v)`. This means that, for a directed graph with unit capacity `c(u, v) = 1` on an edge `(u, v)`, if we send flow along that edge, setting `f(u, v) = 1`, the residual capacity `cf` changes thus:
 
 ```
 cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
