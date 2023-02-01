@@ -1,11 +1,11 @@
 # LEM-IN
 
-1. [PROBLEM](#1.-problem)
-2. [SOLUTION](#2.-solution)
-3. [IMPLEMENTATION](#3.-implementation)
-4. [FURTHER NOTES](#4.-further-notes)
-5. [CURIOSITIES](#5.-curiosities)
-6. [BIBLIOGRAPHY](#6.-bibliography)
+1. [PROBLEM](#1-problem)
+2. [SOLUTION](#2-solution)
+3. [IMPLEMENTATION](#3-implementation)
+4. [FURTHER NOTES](#4-further-notes)
+5. [CURIOSITIES](#5-curiosities)
+6. [BIBLIOGRAPHY](#6-bibliography)
 
 ## 1. PROBLEM
 
