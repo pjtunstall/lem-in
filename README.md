@@ -19,7 +19,7 @@ There are several ways to do this. One is the Ford-Fulkerson method. As original
 
 When such a path is found, we send as much flow as possible along it (always `1` in our case) and adjust the residual capacities accordingly. In this way, we get to push back flow where needed (cancel it out) if we made a less than optimal choice of path earlier. The result is to add a new flow path to the original graph and possibly to modify flow paths found previously. Every new path increases the total flow, hence the name augmenting path. When no more paths are possible, the flow is maximal.
 
-Schroeder, Guedes, and Duarte[^S] outline Ford-Fulkerson and show a way to adapt it to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In [example02](nests/audit_examples/example02), a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
+Schroeder, Guedes, and Duarte[^SGD] outline Ford-Fulkerson and show a way to adapt it to undirected graphs. This is relevant because we've assumed that ants can pass either way along the tunnels. Our instructions make no mention of a preferred direction. At first, we wondered if the order that the rooms are named in the list of connections might indicate a direction, but there are counterexamples among the audit solutions: In [example02](nests/audit_examples/example02), a connection is listed as `3-2`, but, in turn three, `L2` moves from `2` to `3`:
 
 ```
 L1-3 L2-1
@@ -40,7 +40,7 @@ Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found
 
 Note that Edmonds-Karp (and Ford-Fulkerson in general) doesn't place any capacity constraint on nodes. So we need to add a condition to prevent a new path in the residual graph from sharing a node with one of the existing paths of flow unless it also reverses the flow along an edge conncted to that node.
 
-(Equivalently we could have substituted every node `u` with a pair of nodes, an entrance node and an exit node, connected them with a directed edge from entrance to exit, and replaced every edge connected to `u` with an incoming edge connected to the entrance node and an outgoing edge connected to the exit node.[^t][^T])
+(Equivalently we could have substituted every node `u` with a pair of nodes, an entrance node and an exit node, connected them with a directed edge from entrance to exit, and replaced every edge connected to `u` with an incoming edge connected to the entrance node and an outgoing edge connected to the exit node.[^S])
 
 By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution with the smallest number of turns PROVIDED THERE ARE ENOUGH ANTS. In some graphs, however, a maximum flow might include multiple longer paths that block a shorter path. In that event, below a certain number of ants, fewer but shorter paths are best. (See [nests/sneaky_examples/few.txt](nests/sneaky_examples/few.txt).) To eliminate this possibility, our program stops searching if more paths would actually increase the number of turns needed for the given amount of ants.
 
@@ -54,7 +54,7 @@ Aside from some error checking, the task is essentially divided into five functi
 * Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
 * Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
-Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
+Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^SGD]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
 
 We implement the queue as a slice of (pointers to) rooms. The BFS fans out from `start` till a shortest route to `end` is found, subject to the residual capacity constraints. As the search moves on from node `u` to node `v`, say, we set the `v.Predecessor` field equal to `u` to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the `end` has been found because then `end.Predecessor != nil`. This results in a linked list of rooms, which can now be traced back from `end` to `start` and `u.Flow[v]` set to `true` everywhere along the list, except where an edge previously had flow from `v` to `u` (i.e. `v.Flow[u]` was equal to `true`). In that case, the flow is cancelled out: both `u.Flow[v]` and `v.Flow[u]` are set to `false`. It's these Flow fields that will remember the provisional paths after each step of the path search, while the `Predecessor` fields of all rooms are reset to `nil` at the start of the next iteration.
 
@@ -107,9 +107,11 @@ which represents the possibility now to reverse our decision, cancelling out the
 
 Depending on the network and number of ants, there may exist optimal solutions with fewer-than-maximal paths. The audit answer for [example05](nests/audit_examples/example05) is such a case. The number of ants is small enough to achieve the smallest number of turns with only three paths. However, as the number of ants is increased, eventually these three tunnels require more turns than our maximal solution of four paths. Thus, with nine ants, both solutions take eight turns, but, with 99 ants, ours takes 30 turns, while theirs takes 38.
 
-More importantly, for the task of minimising the number of turns, consider [nests/sneaky_examples/few.txt](nests/sneaky_examples/few.txt). Here the maximum flow, consisting of two paths, actually takes more turns than the single shortest path when there are less than four ants, and only outperforms that short path when the number of ants is greater than five. This is why we need to make sure, after each BFS, that the new set of paths doesn't add to the number of turns taken.
+More importantly, for the task of minimising the number of turns, consider our sneaky example [few.txt](nests/sneaky_examples/few.txt). Here the maximum flow, consisting of two paths, actually takes more turns than the single shortest path when there are less than four ants, and only outperforms that short path when the number of ants is greater than five. This is why we need to make sure, after each BFS, that the new set of paths doesn't add to the number of turns taken.
 
 More subtly, while our program gives a solution with the smallest number of turns, it can happen that other, shorter paths are available for the first few ants, permitting a solution with just as few turns, but even fewer individual ant-moves. This is the case in [example01](nests/audit_examples/example01), where the first ant to go to `h` can take one of the shorter paths, `start-h-n-e-end` or `start-n-m-end`, without blocking ants coming via `0` or `t`, provided all other ants follow the three longer paths of the maximum flow.
+
+One final observation: While parsing the nest, repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_tunnel](nests/sneaky_examples/double_tunnel) and [double_trouble](nests/sneaky_examples/double_trouble).)
 
 ## 6. BIBLIOGRAPHY
 
@@ -117,10 +119,8 @@ More subtly, while our program gives a solution with the smallest number of turn
 
 [^D]: Dawson J: [Lem-in: Finding all the paths and deciding which are worth it](https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893). Nov. 19, 2019. Accessed Jan. 1, 2023.
 
-[^T]: Trung, P: ANSWER TO: [C implementation of an algorithm for flow resolution with non-weighted, bidirectional edges, and nodes with flow capacity](https://stackoverflow.com/questions/8751327/edmonds-karp-algorithm-for-a-graph-which-has-nodes-with-flow-capacities).
+[^S]: Sheffer A: [Caltech Math 6a: Introduction to Discrete Mathematics, Class 14: Various (Flow) Exercises: Problem 6: Vertex Disjoint Paths](http://www.math.caltech.edu/~2014-15/1term/ma006a/class14.pdf). Oct. 2014 Accessed Jan. 1, 2023.
 
-[^t]: tskuzzy: ANSWER TO: [Edmonds-Karp Algorithm for a graph which has nodes with flow capacities](https://stackoverflow.com/questions/8751327/edmonds-karp-algorithm-for-a-graph-which-has-nodes-with-flow-capacities). Accessed Jan. 1, 2023.
-
-[^S]: Schroeder J, Guedes AP, Duarte EP: [Computing the Minimum Cut and Maximum Flow of Undirected Graphs](https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf). RT-DINF 003/2004. Accessed Jan. 1. 2023.
+[^SGD]: Schroeder J, Guedes AP, Duarte EP: [Computing the Minimum Cut and Maximum Flow of Undirected Graphs](https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf). RT-DINF 003/2004. Accessed Jan. 1. 2023.
 
 [^W]: Wikipedia: [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm). Apr. 14, 2022. Accessed Jan. 1. 2023.

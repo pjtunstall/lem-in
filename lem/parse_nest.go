@@ -95,7 +95,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 							match = true
 						}
 					}
-					if !match {
+					if !match || (nest.Rooms[i].Start && v.End) || (nest.Rooms[i].End && v.Start) {
 						nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
 					}
 				}
@@ -107,7 +107,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 							match = true
 						}
 					}
-					if !match {
+					if !match || (nest.Rooms[i].Start && u.End) || (nest.Rooms[i].End && u.Start) {
 						nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
 					}
 				}
