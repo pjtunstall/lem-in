@@ -9,7 +9,7 @@
 
 ## 1. PROBLEM
 
-Suppose we're given a number of ants and a network of rooms connected by tunnels. One room is labelled `start` and another `end`. Initially all ants are in `start`. Find a way to move all the ants to `end` in the smallest number of turns, subject to the following contraints: one ant per tunnel per turn, and one ant per room at the end of a turn except for `start` and `end`, which can contain any number of ants. (See the 01-Edu Public Repo [^0].)
+Suppose we're given a number of ants and a network of rooms connected by tunnels. One room is labelled `start` and another `end`. Initially all ants are in `start`. Find a way to move all the ants to `end` in the smallest number of turns, subject to the following contraints: one ant per tunnel per turn, and one ant per room at the end of a turn except for `start` and `end`, which can contain any number of ants. (See the 01-Edu Public Repo. [^0])
 
 ## 2. SOLUTION
 
