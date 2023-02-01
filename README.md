@@ -38,7 +38,7 @@ Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found
 
 Note that Edmonds-Karp (and Ford-Fulkerson in general) doesn't place any capacity constraint on nodes. So we need to add a condition to prevent a new path in the residual graph from sharing a node with one of the existing paths of flow unless it also reverses the flow along an edge conncted to that node.
 
-(Equivalently we could have substituted every node `u` with a pair of nodes, an entrance node and an exit node, connected them with a directed edge from entrance to exit, and replaced every edge connected to `u` with an incoming edge connected to the entrance node and an outgoing edge connected to the exit node.)
+(Equivalently we could have substituted every node `u` with a pair of nodes, an entrance node and an exit node, connected them with a directed edge from entrance to exit, and replaced every edge connected to `u` with an incoming edge connected to the entrance node and an outgoing edge connected to the exit node.[^t][^T])
 
 By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution with the smallest number of turns PROVIDED THERE ARE ENOUGH ANTS. In some graphs, however, a maximum flow might include multiple longer paths that block a shorter path. In that event, below a certain number of ants, fewer but shorter paths are best. (See [nests/sneaky_examples/few.txt](nests/sneaky_examples/few.txt).) To eliminate this possibility, our program stops searching if more paths would actually increase the number of turns needed for the given amount of ants.
 
@@ -111,11 +111,14 @@ More subtly, while our program gives a solution with the smallest number of turn
 
 ## 6. BIBLIOGRAPHY
 
-[^0]: 01-Edu: Public Repo [ https://github.com/01-edu/public/tree/master/subjects/lem-in ]. Accessed Jan. 1, 2023.
+[^0]: [01-Edu: Public Repo](https://github.com/01-edu/public/tree/master/subjects/lem-in). Accessed Jan. 1, 2023.
 
-[^D]: Dawson J: Lem-in: Finding all the paths and deciding which are worth it [ https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893 ]. Nov. 19, 2019. Accessed Jan. 1, 2023.
+[^D]: Dawson J: [Lem-in: Finding all the paths and deciding which are worth it](https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893). Nov. 19, 2019. Accessed Jan. 1, 2023.
 
-[^S]: Schroeder J, Guedes AP, Duarte EP: Computing the Minimum Cut and Maximum Flow of Undirected Graphs
-[ https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf ]. RT-DINF 003/2004. Accessed Jan. 1. 2023.
+[^T]: Trung, P: ANSWER TO: [C implementation of an algorithm for flow resolution with non-weighted, bidirectional edges, and nodes with flow capacity](https://stackoverflow.com/questions/8751327/edmonds-karp-algorithm-for-a-graph-which-has-nodes-with-flow-capacities).
 
-[^W]: Wikipedia: Edmonds-Karp algorithm [ https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm ]. Apr. 14, 2022. Accessed Jan. 1. 2023.
+[^t]: tskuzzy: ANSWER TO: [Edmonds-Karp Algorithm for a graph which has nodes with flow capacities](https://stackoverflow.com/questions/8751327/edmonds-karp-algorithm-for-a-graph-which-has-nodes-with-flow-capacities). Accessed Jan. 1, 2023.
+
+[^S]: Schroeder J, Guedes AP, Duarte EP: [Computing the Minimum Cut and Maximum Flow of Undirected Graphs](https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf). RT-DINF 003/2004. Accessed Jan. 1. 2023.
+
+[^W]: Wikipedia: [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm). Apr. 14, 2022. Accessed Jan. 1. 2023.
