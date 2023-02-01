@@ -9,7 +9,7 @@
 #paths is stopped at one path, this example
 #would fail to find the optimal solution for
 #just one ant.
-
+#
 1
 ##start
 start 1 6

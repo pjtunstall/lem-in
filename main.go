@@ -33,7 +33,7 @@ func main() {
 	if problem {
 		return
 	}
-	flow, paths := lem.MaxFlow(&nest, ants)
+	flow, paths := lem.PathFinder(&nest, ants)
 	if flow == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return

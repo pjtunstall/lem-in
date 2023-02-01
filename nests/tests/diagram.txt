@@ -1,6 +1,6 @@
 #This is the first example in the instructions.
 #No solution is given for it, but there is an illustration:
-
+#
 #         __________________
 #        /                  \
 #   ____[5]----[3]--[1]     |
@@ -9,7 +9,7 @@
 #  \   ________/|  /        |
 #   \ /        [2]/________/
 #   [7]_________/
-
+#
 9
 ##start
 1 23 3

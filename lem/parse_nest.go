@@ -89,11 +89,27 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 				pair := strings.Split(text[j], "-")
 				if nest.Rooms[i].Name == pair[0] {
 					v := findRoom(pair[1], len(nest.Rooms), &nest)
-					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
+					match := false
+					for _, nb := range nest.Rooms[i].Neighbors {
+						if nb == v {
+							match = true
+						}
+					}
+					if !match {
+						nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, v)
+					}
 				}
 				if nest.Rooms[i].Name == pair[1] {
 					u := findRoom(pair[0], len(nest.Rooms), &nest)
-					nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
+					match := false
+					for _, nb := range nest.Rooms[i].Neighbors {
+						if nb == u {
+							match = true
+						}
+					}
+					if !match {
+						nest.Rooms[i].Neighbors = append(nest.Rooms[i].Neighbors, u)
+					}
 				}
 			}
 		}
