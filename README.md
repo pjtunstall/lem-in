@@ -34,7 +34,7 @@ L1-A2 L2-A1 L3-A0 L4-E2 L5-B1 L6-C2 L9-B0
 L1-end L2-A2 L3-A1 L4-D2 L5-E2 L6-C3 L7-A0 L9-B1
 ```
 
-Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found randomly, it will still work, but there are more detailed algorithms that follow the Ford-Fulkerson method except with better-than-random choice of paths. We use one of these: Edmonds-Karp [^W]. At each step, Edmonds-Karp finds a shortest valid path using breadth first search (BFS).
+Ford-Fulkerson doesn't specify how the paths are to be found. If paths are found randomly, it will still work, but there are more detailed algorithms that follow the Ford-Fulkerson method except with better-than-random choice of paths. We use one of these: Edmonds-Karp. [^W] At each step, Edmonds-Karp finds a shortest valid path using breadth first search (BFS).
 
 Note that Edmonds-Karp (and Ford-Fulkerson in general) doesn't place any capacity constraint on nodes. So we need to add a condition to prevent a new path in the residual graph from sharing a node with one of the existing paths of flow unless it also reverses the flow along an edge conncted to that node.
 
@@ -49,7 +49,7 @@ Aside from some error checking, the task is essentially divided into five functi
 * [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
 * [PathFinder](lem/path_finder.go) uses BFS to find paths according to Edmonds-Karp.
 * It calls [PathCollector](lem/path_collector.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
-* Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson[^D].
+* Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
 * Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
 Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^S]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
