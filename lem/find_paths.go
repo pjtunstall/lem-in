@@ -4,20 +4,15 @@ func CountTurns(paths []*Path, nest *Nest, ants int) int {
 	return len(paths[0].Rooms) + paths[0].Ants - 2
 }
 
-func PathFinder(nest *Nest, ants int) (int, []*Path) {
+func FindPaths(nest *Nest, ants int) (int, []*Path) {
 	numberOfTurns := len(nest.Rooms) + ants - 2
 	var paths []*Path
-	for i := 1; i <= ants; i++ {
+	for len(paths) <= ants {
 		q := []*Room{nest.Start}
 		for _, r := range nest.Rooms {
 			r.Predecessor = nil
 		}
 		for len(q) != 0 {
-			// Uncomment to see what's in the queue at each iteration.
-			// for _, r := range q {
-			// 	fmt.Print(r.Name)
-			// }
-			// fmt.Println()
 			u := q[0]
 			if len(q) > 1 {
 				q = q[1:]
@@ -45,14 +40,12 @@ func PathFinder(nest *Nest, ants int) (int, []*Path) {
 		}
 		nest.End.Predecessor.Flow[nest.End] = true
 		for v := nest.End.Predecessor; !v.Start; {
-			// Uncomment this and the Println below to see paths in the residual graph as they're found.
-			// fmt.Printf("%v <--", v.Name)
 			u := v.Predecessor
 			u.Flow[v] = !v.Flow[u]
 			v.Flow[u] = false
 			v = u
 		}
-		newPaths := PathCollector(nest)
+		newPaths := GatherPaths(nest)
 		SendAnts(newPaths, nest, ants)
 		newNumberOfTurns := CountTurns(newPaths, nest, ants)
 		if newNumberOfTurns > numberOfTurns {
@@ -60,7 +53,6 @@ func PathFinder(nest *Nest, ants int) (int, []*Path) {
 		}
 		numberOfTurns = newNumberOfTurns
 		paths = newPaths
-		// fmt.Println()
 	}
 	flow := 0
 	for _, n := range nest.End.Neighbors {

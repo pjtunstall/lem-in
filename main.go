@@ -33,7 +33,7 @@ func main() {
 	if problem {
 		return
 	}
-	flow, paths := lem.PathFinder(&nest, ants)
+	flow, paths := lem.FindPaths(&nest, ants)
 	if flow == 0 {
 		fmt.Println("ERROR: No paths found.")
 		return

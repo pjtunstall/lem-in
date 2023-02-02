@@ -49,20 +49,20 @@ By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution wit
 Aside from some error checking, the task is essentially divided into five functions:
 
 * [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
-* [PathFinder](lem/path_finder.go) uses BFS to find paths according to Edmonds-Karp.
-* It calls [PathCollector](lem/path_collector.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
+* [FindPaths](lem/path_finder.go) uses BFS to find paths according to Edmonds-Karp.
+* It calls [GatherPaths](lem/path_collector.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
 * Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
 * Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
-Most important conceptually is `PathFinder`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^SGD]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
+Most important conceptually is `FindPaths`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^SGD]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
 
 We implement the queue as a slice of (pointers to) rooms. The BFS fans out from `start` till a shortest route to `end` is found, subject to the residual capacity constraints. As the search moves on from node `u` to node `v`, say, we set the `v.Predecessor` field equal to `u` to mark where we came from. The Predecessor field thus serves to mark which nodes have been visited during a particular iteration of the search for paths. Predecessor also signals when the `end` has been found because then `end.Predecessor != nil`. This results in a linked list of rooms, which can now be traced back from `end` to `start` and `u.Flow[v]` set to `true` everywhere along the list, except where an edge previously had flow from `v` to `u` (i.e. `v.Flow[u]` was equal to `true`). In that case, the flow is cancelled out: both `u.Flow[v]` and `v.Flow[u]` are set to `false`. It's these Flow fields that will remember the provisional paths after each step of the path search, while the `Predecessor` fields of all rooms are reset to `nil` at the start of the next iteration.
 
-`PathCollector` turns the resulting linked lists of flow into objects of struct type `Path`. The rooms belonging to each path, `p`, are stored in a slice in the `p.Room` field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
+`GatherPaths` turns the resulting linked lists of flow into objects of struct type `Path`. The rooms belonging to each path, `p`, are stored in a slice in the `p.Room` field. The paths themselves are collected into a slice and ordered by length for ease of assigning the ants.
 
 Future iterations of the path search revise and augment the flow, as described above. When no more paths can be found without breaking the capacity constraints or increasing the number of turns, the slice of paths is returned and used by `PrintTurns` to output the result.
 
-To summarise `PathFinder`:
+To summarise `FindPaths`:
 
 1. Set `numberOfTurns` to the maximum possible for any nest: `len(nest.Rooms) + ants - 2` (the number of rooms plus the number of ants minus two).
 2. Begin loop.
@@ -70,7 +70,7 @@ To summarise `PathFinder`:
 4. BFS.
 5. If `nest.End` has no predecessor, break.
 6. Update flow.
-7. If this didn't reduce the number of turns, break.
+7. If this increased the number of turns, break.
 8. Update paths.
 9. End loop.
 10. Return paths and flow.

@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-func PathCollector(nest *Nest) []*Path {
+func GatherPaths(nest *Nest) []*Path {
 	paths := []*Path{}
 	for _, n := range nest.Start.Neighbors {
 		if nest.Start.Flow[n] {
