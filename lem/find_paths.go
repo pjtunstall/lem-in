@@ -7,7 +7,7 @@ func CountTurns(paths []*Path, nest *Nest, ants int) int {
 func FindPaths(nest *Nest, ants int) (int, []*Path) {
 	numberOfTurns := len(nest.Rooms) + ants - 2
 	var paths []*Path
-	for len(paths) <= ants {
+	for len(paths) < ants {
 		q := []*Room{nest.Start}
 		for _, r := range nest.Rooms {
 			r.Predecessor = nil
