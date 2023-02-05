@@ -12,7 +12,7 @@ func findFirstLineWithTunnel(text []string) int {
 			return i
 		}
 	}
-	return 0
+	return len(text)
 }
 
 func nameRoom(name string, room *Room) *Room {
@@ -55,6 +55,10 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	var nest Nest
 	n := findFirstLineWithTunnel(text)
+	if n == len(text) {
+		fmt.Println("ERROR: No tunnels.")
+		return nest, true
+	}
 	for i := firstNonCommentLine + 1; i < n; i++ {
 		switch {
 		case strings.Contains(text[i], "#"):
