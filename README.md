@@ -13,7 +13,7 @@ Suppose we're given a number of ants and a network of rooms connected by tunnels
 
 ## 2. SOLUTION
 
-We first start looking for a maximum flow (a largest set of compatible paths) through the corresponding undirected flow network with unit capacity on all nodes and edges.
+This scenario can be modelled as an undirected flow network with unit capacity on all nodes and edges. We first start looking for a maximum flow. For us, this amounts to finding a largest set of compatible paths from `start` to `end`.
 
 There are several ways to do this. One is the Ford-Fulkerson method. As originally described for directed graphs, this works by defining an auxiliary network called the residual graph, having the same nodes and edges as the original graph, except that the weight of each edge, known as the residual capacity, is set equal to capacity minus flow. Initially the flow is set to zero. Then, for as many iterations as possible, we find a path (known as an augmenting path) from `start` to `end`, with no cycles, in the residual graph.
 
@@ -83,7 +83,7 @@ The formula for the maximum possible number of turns comes from the fact that th
 
 In general, the number of turns taken will be the length of the path with the largest number of ants (which will be the first and shortest path, according to our way of assigning ants), plus the number of ants minus two.
 
-Note that `u.Flow`, for a room `u`, is of type [`map[*Room]bool`](lem/structs.go). This booleam value is not quite what is meant by flow in the formal definition of a flow network. Rather, it's been streamlined to suit our case of unit capacity everywhere.
+Note that `u.Flow`, for a room `u`, is of type [`map[*Room]bool`](lem/structs.go). This boolean value is not quite what is meant by flow in the formal definition of a flow network. Rather, it's been streamlined to suit our case of unit capacity everywhere.
 
 More properly, in any flow network (directed or undirected), if `f(u, v)` is the flow from a node `u` to another node `v`, then `f(v, u) = -f(u, v)`. This means that, for a directed graph with unit capacity `c(u, v) = 1` on an edge `(u, v)`, if we send flow along that edge, setting `f(u, v) = 1`, the residual capacity `cf` changes thus:
 
@@ -107,11 +107,11 @@ which represents the possibility now to reverse our decision, cancelling out the
 
 Depending on the network and number of ants, there may exist optimal solutions with fewer-than-maximal paths. The audit answer for [example05](nests/audit_examples/example05) is such a case. The number of ants is small enough to achieve the smallest number of turns with only three paths. However, as the number of ants is increased, eventually these three tunnels require more turns than our maximal solution of four paths. Thus, with nine ants, both solutions take eight turns, but, with 99 ants, ours takes 30 turns, while theirs takes 38.
 
-More importantly, for the task of minimising the number of turns, consider our sneaky example [few.txt](nests/sneaky_examples/few.txt). Here the maximum flow, consisting of two paths, actually takes more turns than the single shortest path when there are less than four ants, and only outperforms that short path when the number of ants is greater than five. This is why we need to make sure, after each BFS, that the new set of paths doesn't add to the number of turns taken.
+Of greater relevance to the task of minimising the number of turns, consider our sneaky example [few.txt](nests/sneaky_examples/few.txt). Here the maximum flow, consisting of two paths, actually takes more turns than the single shortest path when there are less than four ants, and only outperforms that short path when the number of ants is greater than five. This is why we need to make sure, after each BFS, that the new set of paths doesn't add to the number of turns taken.
 
 More subtly, while our program gives a solution with the smallest number of turns, it can happen that other, shorter paths are available for the first few ants, permitting a solution with just as few turns, but even fewer individual ant-moves. This is the case in [example01](nests/audit_examples/example01), where the first ant to go to `h` can take one of the shorter paths, `start-h-n-e-end` or `start-n-m-end`, without blocking ants coming via `0` or `t`, provided all other ants follow the three longer paths of the maximum flow.
 
-One final observation: While parsing the nest, repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_tunnel](nests/sneaky_examples/double_tunnel) and [double_trouble](nests/sneaky_examples/double_trouble).)
+One final observation: While parsing the nest, a repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_trouble](nests/sneaky_examples/double_trouble) and [nine_mens_morris](nests/sneaky_examples/nine_mens_morris).)
 
 ## 6. BIBLIOGRAPHY
 
