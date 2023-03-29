@@ -101,7 +101,7 @@ cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
 cf(v, u) = c(v, u) - f(v, u) = 1 - (-1) = 2,
 ```
 
-which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` and never `-1`.
+which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` (actually represented by a boolean: `false` or `true`) and never `-1`.
 
 ## 5. CURIOSITIES
 
