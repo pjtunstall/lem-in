@@ -4,8 +4,9 @@
 2. [SOLUTION](#2-solution)
 3. [IMPLEMENTATION](#3-implementation)
 4. [FURTHER NOTES](#4-further-notes)
-5. [CURIOSITIES](#5-curiosities)
-6. [BIBLIOGRAPHY](#6-bibliography)
+5. [AN ALTERNATIVE WAY](#5-an-alternative-way)
+6. [CURIOSITIES](#5-curiosities)
+7. [BIBLIOGRAPHY](#6-bibliography)
 
 ## 1. PROBLEM
 
@@ -101,9 +102,17 @@ cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
 cf(v, u) = c(v, u) - f(v, u) = 1 - (-1) = 2,
 ```
 
-which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` (actually represented by a boolean: `false` or `true`) and never `-1`.
+which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` (hence actually now represented by a boolean: `false` or `true`) and never `-1`.
 
-## 5. CURIOSITIES
+## 5. AN ALTERNATIVE WAY
+
+Before solving the problem, a natural first step seemed to be to find all the paths. One of us (Bilal) took this approach, using a form of BFS where the elements of the queue are not individual nodes but partial paths. First the partial path containing just the start node is placed in the queue. Then each time a partial path is "popped" from the queue, the neighbors of its last node are explored to see if a valid path can go from that last node to the neighbor. Every partial path with the valid neighbor as its new last node is added to the queue. While searching for all paths, a valid node is just one that isn't already part of that partial path. When the end node is added to a partial path, the resulting complete path is added to the list of paths. In this way, all paths can be found.
+
+To find a maximum flow, it's then just a matter of changing the definition of validity and adjusting the flow and residual capacity after each path is found to accord with the Ford-Fulkerson technique. A valid neighbor to add to a path is now one for which there is residual capacity to send flow to it from the last node in the path.
+
+And, for our problem, of course, one also has to include the restriction of node capacity as described above and make sure that, for small numbers of ants, the search stops before new paths would cause the number of turns to increase.
+
+## 6. CURIOSITIES
 
 Depending on the network and number of ants, there may exist optimal solutions with fewer-than-maximal paths. The audit answer for [example05](nests/audit_examples/example05) is such a case. The number of ants is small enough to achieve the smallest number of turns with only three paths. However, as the number of ants is increased, eventually these three tunnels require more turns than our maximal solution of four paths. Thus, with nine ants, both solutions take eight turns, but, with 99 ants, ours takes 30 turns, while theirs takes 38.
 
@@ -113,7 +122,7 @@ More subtly, while our program gives a solution with the smallest number of turn
 
 One final observation: While parsing the nest, a repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_trouble](nests/sneaky_examples/double_trouble) and [nine_mens_morris](nests/sneaky_examples/nine_mens_morris).)
 
-## 6. BIBLIOGRAPHY
+## 7. BIBLIOGRAPHY
 
 [^0]: [01-Edu: Public Repo](https://github.com/01-edu/public/tree/master/subjects/lem-in). Accessed Jan. 1, 2023.
 
