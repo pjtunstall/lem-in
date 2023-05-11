@@ -34,10 +34,14 @@ func main() {
 		return
 	}
 	flow, paths := lem.FindPaths(&nest, ants)
-	if flow == 0 {
+	if flow == 0 && nest.Start.Name != nest.End.Name {
 		fmt.Println("ERROR: No paths found.")
 		return
 	}
-	fmt.Printf("%v\n\n", textFile)
+	fmt.Println(textFile)
+	if nest.Start.Name == nest.End.Name {
+		return
+	}
+	fmt.Println()
 	lem.PrintTurns(paths, &nest, ants)
 }

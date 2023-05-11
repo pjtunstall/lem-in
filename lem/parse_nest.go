@@ -54,11 +54,9 @@ func findRoom(name string, counter int, nest *Nest) *Room {
 
 func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	var nest Nest
+	startLine := 0
+	endLine := 0
 	n := findFirstLineWithTunnel(text)
-	if n == len(text) {
-		fmt.Println("ERROR: No tunnels.")
-		return nest, true
-	}
 	for i := firstNonCommentLine + 1; i < n; i++ {
 		switch {
 		case strings.Contains(text[i], "#"):
@@ -71,21 +69,41 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 			if text[i-1] == "##start" {
 				r.Start = true
 				nest.Start = r
+				startLine = i
+				if text[i-2] == "##end" {
+					endLine = i - 1
+				}
 			}
 			if text[i-1] == "##end" {
 				r.End = true
 				nest.End = r
+				endLine = i
+				if text[i-2] == "##start" {
+					startLine = i - 1
+				}
 			}
 			nest.Rooms = append(nest.Rooms, r)
 		}
 	}
-	if nest.Start == nil {
-		fmt.Println("ERROR: No start room found.")
-		return nest, true
-	}
-	if nest.End == nil {
-		fmt.Println("ERROR: No end room found.")
-		return nest, true
+	diff := endLine - startLine
+	switch diff {
+	case 1:
+		nest.Start = nest.End
+	case -1:
+		nest.End = nest.Start
+	default:
+		if nest.Start == nil {
+			fmt.Println("ERROR: No start room found.")
+			return nest, true
+		}
+		if nest.End == nil {
+			fmt.Println("ERROR: No end room found.")
+			return nest, true
+		}
+		if n == len(text) {
+			fmt.Println("ERROR: No tunnels.")
+			return nest, true
+		}
 	}
 	for i := 0; i < len(nest.Rooms); i++ {
 		for j := n; j < len(text); j++ {
