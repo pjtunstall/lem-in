@@ -70,7 +70,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 				r.Start = true
 				nest.Start = r
 				startLine = i
-				if text[i-2] == "##end" {
+				if i-2 >= 0 && text[i-2] == "##end" {
 					endLine = i - 1
 				}
 			}
@@ -78,7 +78,7 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 				r.End = true
 				nest.End = r
 				endLine = i
-				if text[i-2] == "##start" {
+				if i-2 >= 0 && text[i-2] == "##start" {
 					startLine = i - 1
 				}
 			}
@@ -89,8 +89,10 @@ func ParseNest(text []string, firstNonCommentLine int) (Nest, bool) {
 	switch diff {
 	case 1:
 		nest.Start = nest.End
+		return nest, false
 	case -1:
 		nest.End = nest.Start
+		return nest, false
 	default:
 		if nest.Start == nil {
 			fmt.Println("ERROR: No start room found.")
