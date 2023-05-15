@@ -50,8 +50,8 @@ By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution wit
 Aside from some error checking, the task is essentially divided into five functions:
 
 * [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
-* [FindPaths](lem/path_finder.go) uses BFS to find paths according to Edmonds-Karp.
-* It calls [GatherPaths](lem/path_collector.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
+* [FindPaths](lem/find_paths.go) uses BFS to find paths according to Edmonds-Karp.
+* It calls [GatherPaths](lem/gather_path.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
 * Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
 * Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
