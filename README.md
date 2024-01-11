@@ -1,18 +1,18 @@
-# LEM-IN
+# lem-in
 
-1. [PROBLEM](#1-problem)
-2. [SOLUTION](#2-solution)
-3. [IMPLEMENTATION](#3-implementation)
-4. [FURTHER NOTES](#4-further-notes)
-5. [AN ALTERNATIVE WAY](#5-an-alternative-way)
-6. [CURIOSITIES](#5-curiosities)
-7. [BIBLIOGRAPHY](#6-bibliography)
+1. [Problem](#1-problem)
+2. [Solution](#2-solution)
+3. [Implementation](#3-implementation)
+4. [Further notes](#4-further-notes)
+5. [An alternative way](#5-an-alternative-way)
+6. [Curiosities](#5-curiosities)
+7. [Bibliography](#6-bibliography)
 
-## 1. PROBLEM
+## 1. Problem
 
 Suppose we're given a number of ants and a network of rooms connected by tunnels. One room is labelled `start` and another `end`. Initially all ants are in `start`. Find a way to move all the ants to `end` in the smallest number of turns, subject to the following contraints: one ant per tunnel per turn, and one ant per room at the end of a turn except for `start` and `end`, which can contain any number of ants. (See the 01-Edu Public Repo. [^0])
 
-## 2. SOLUTION
+## 2. Solution
 
 This scenario can be modelled as an undirected flow network with unit capacity on all nodes and edges. We first start looking for a maximum flow. For us, this amounts to finding a largest set of compatible paths from `start` to `end`.
 
@@ -45,15 +45,15 @@ Note that Edmonds-Karp (and Ford-Fulkerson in general) doesn't place any capacit
 
 By favouring maximum flows with shorter paths, Edmonds-Karp finds a solution with the smallest number of turns PROVIDED THERE ARE ENOUGH ANTS. In some graphs, however, a maximum flow might include multiple longer paths that block a shorter path. In that event, below a certain number of ants, fewer but shorter paths are best. (See [nests/sneaky_examples/few.txt](nests/sneaky_examples/few.txt).) To eliminate this possibility, our program stops searching if more paths would actually increase the number of turns needed for the given amount of ants.
 
-## 3. IMPLEMENTATION
+## 3. Implementation
 
 Aside from some error checking, the task is essentially divided into five functions:
 
-* [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
-* [FindPaths](lem/find_paths.go) uses BFS to find paths according to Edmonds-Karp.
-* It calls [GatherPaths](lem/gather_path.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
-* Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
-* Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
+- [ParseNest](lem/parse_nest.go) parses the nest into structs of type [`Nest`](lem/structs.go) and [`Room`](lem/structs.go).
+- [FindPaths](lem/find_paths.go) uses BFS to find paths according to Edmonds-Karp.
+- It calls [GatherPaths](lem/gather_path.go) to gather these paths into a slice of items of struct type [`Path`](lem/structs.go).
+- Then it calls [SendAnts](lem/send_ants.go) to assign ants to paths according to the scheme described by Jamie Dawson.[^D]
+- Finally, [PrintTurns](lem/print_turns.go) formats the result in the style of the audit solutions.
 
 Most important conceptually is `FindPaths`. This function implements the Edmonds-Karp algorithm (i.e. Ford-Fulkerson with BFS), adapted to undirected graphs (per Schroeder, Guedes, Duarte[^SGD]) and streamlined to our case of unit capacity on all edges, but with the additional constraint of node capacity and the extra rule to stop searching if more paths would increase the number of turns.
 
@@ -78,7 +78,7 @@ To summarise `FindPaths`:
 
 And if flow is zero, the `main` function reports that no paths were found.
 
-## 4. Further Notes
+## 4. Further notes
 
 The formula for the maximum possible number of turns comes from the fact that this would occur if the graph consisted of one line of all nodes from `start` to `end`. Since the ants are already in `start`, we can subtract one from the number of turns it will take them to move through all the nodes. Since the first ant doesn't have to wait any turns, we can subtract another one, making a total of two. Consider, for example, the simplest case, where the nest consists of just two rooms, `start` and `end` and there is only one ant. Then `len(nest.Rooms) = 2` and `ants = 1`, so the number of turns is `2 + 1 - 2 = 1`.
 
@@ -102,9 +102,9 @@ cf(u, v) = c(u, v) - f(u, v) = 1 - 1 = 0,
 cf(v, u) = c(v, u) - f(v, u) = 1 - (-1) = 2,
 ```
 
-which represents the possibility now to reverse our decision, cancelling out the flow from  `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` (hence actually now represented by a boolean: `false` or `true`) and never `-1`.
+which represents the possibility now to reverse our decision, cancelling out the flow from `u` to `v` and then to still have the ability to send flow from `v` to `u`. However, since any path must send flow from `start` to an adjacent node (and likewise to `end` along an edge from one of its neighbours), and since these "forward" directions must have unit residual capacity, `1` is the "bottleneck" value for any path, and that full residual capacity of `2` on in a reverse direction can never be used. Because of this, our program uses a simplified definition of flow that only takes values of `0` or `1` (hence actually now represented by a boolean: `false` or `true`) and never `-1`.
 
-## 5. AN ALTERNATIVE WAY
+## 5. An alternative way
 
 Before solving the problem, a natural first step seemed to be to find all the paths. One of us (Bilal) took this approach, using a form of BFS where the elements of the queue are not individual nodes but partial paths. First the partial path containing just the start node is placed in the queue. Then each time a partial path is "popped" from the queue, the neighbors of its last node are explored to see if a valid path can go from that last node to the neighbor. Every partial path with the valid neighbor as its new last node is added to the queue. While searching for all paths, a valid node is just one that isn't already part of that partial path. When the end node is added to a partial path, the resulting complete path is added to the list of paths. In this way, all paths can be found.
 
@@ -112,7 +112,7 @@ To find a maximum flow, it's then just a matter of changing the definition of va
 
 And, for our problem, of course, one also has to include the restriction of node capacity as described above and make sure that, for small numbers of ants, the search stops before new paths would cause the number of turns to increase.
 
-## 6. CURIOSITIES
+## 6. Curiosities
 
 Depending on the network and number of ants, there may exist optimal solutions with fewer-than-maximal paths. The audit answer for [example05](nests/audit_examples/example05) is such a case. The number of ants is small enough to achieve the smallest number of turns with only three paths. However, as the number of ants is increased, eventually these three tunnels require more turns than our maximal solution of four paths. Thus, with nine ants, both solutions take eight turns, but, with 99 ants, ours takes 30 turns, while theirs takes 38.
 
@@ -122,14 +122,10 @@ More subtly, while our program gives a solution with the smallest number of turn
 
 One final observation: While parsing the nest, a repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_trouble](nests/sneaky_examples/double_trouble) and [nine_mens_morris](nests/sneaky_examples/nine_mens_morris).)
 
-## 7. BIBLIOGRAPHY
+## 7. Bibliography
 
 [^0]: [01-Edu: Public Repo](https://github.com/01-edu/public/tree/master/subjects/lem-in). Accessed Jan. 1, 2023.
-
 [^D]: Dawson J: [Lem-in: Finding all the paths and deciding which are worth it](https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893). Nov. 19, 2019. Accessed Jan. 1, 2023.
-
 [^S]: Sheffer A: [Caltech Math 6a: Introduction to Discrete Mathematics, Class 14: Various (Flow) Exercises: Problem 6: Vertex Disjoint Paths](http://www.math.caltech.edu/~2014-15/1term/ma006a/class14.pdf). Oct. 30, 2014 Accessed Jan. 1, 2023.
-
 [^SGD]: Schroeder J, Guedes AP, Duarte EP: [Computing the Minimum Cut and Maximum Flow of Undirected Graphs](https://www.inf.ufpr.br/pos/techreport/RT_DINF003_2004.pdf). RT-DINF 003/2004. Accessed Jan. 1. 2023.
-
 [^W]: Wikipedia: [Edmonds-Karp algorithm](https://en.wikipedia.org/wiki/Edmonds%E2%80%93Karp_algorithm). Apr. 14, 2022. Accessed Jan. 1. 2023.
