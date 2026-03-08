@@ -6,7 +6,7 @@
 4. [Further notes](#4-further-notes)
 5. [An alternative way](#5-an-alternative-way)
 6. [Curiosities](#5-curiosities)
-7. [Bibliography](#6-bibliography)
+7. [Footnotes](#6-footnotes)
 
 ## 1. Problem
 
@@ -122,7 +122,7 @@ More subtly, while our program gives a solution with the smallest number of turn
 
 One final observation: While parsing the nest, a repeated link (assuming this represents parallel/antiparallel edges) can usually be ignored. Any attempt to use more than one tunnel connecting a pair of rooms would either put more than one ant in a room at once or cause ants to waste a turn by needlessly swapping rooms. The only exception is when the rooms so linked are `start` and `end`. (See our sneaky examples [double_trouble](nests/sneaky_examples/double_trouble) and [nine_mens_morris](nests/sneaky_examples/nine_mens_morris).)
 
-## 7. Bibliography
+## 7. Footnotes
 
 [^0]: [01-Edu: Public Repo](https://github.com/01-edu/public/tree/master/subjects/lem-in). Accessed Jan. 1, 2023.
 [^D]: Dawson J: [Lem-in: Finding all the paths and deciding which are worth it](https://medium.com/@jamierobertdawson/lem-in-finding-all-the-paths-and-deciding-which-are-worth-it-2503dffb893). Nov. 19, 2019. Accessed Jan. 1, 2023.
